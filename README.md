@@ -1,0 +1,101 @@
+# Pack Out
+
+A transparent, editable rules engine for camping, with a packing app on top of it.
+
+The list is generated, never hand-maintained. Every item can say why it is there,
+every reason is a rule in plain language, and every rule is data you can edit
+rather than code somebody shipped. It is built the way a zoning bylaw is built:
+codified conditions, exemptions and thresholds, with an interpretation trail from
+input to outcome.
+
+If a packing decision is hard-coded anywhere in here, that is a bug.
+
+## Running it
+
+```sh
+npm install
+npm run dev        # http://localhost:5173
+npm run check      # typecheck + tests + stylesheet audit
+npm run build      # static output in dist/, deployable to Vercel as-is
+```
+
+## How it fits together
+
+```
+Trip (inputs) ──► deriveFacts ──► buildList ──► grouped views
+                                      ▲
+                            Library (items, rules, people, containers)
+```
+
+| Directory | What lives there |
+|---|---|
+| `src/data/` | Types, the default library, the authoring DSL, schema and migrations, golden fixtures |
+| `src/engine/` | Pure functions over plain data: facts, condition and quantity evaluation, list building, lint, diff, gates, text export |
+| `src/state/` | Three storage scopes, kept separate: library, trips, session |
+| `src/views/` | One per navigation destination |
+| `src/components/` | Shared pieces, including the interpretation trail |
+| `scripts/` | The stylesheet audit that runs in `npm run check` |
+| `docs/decisions.md` | Why things are the way they are |
+
+The engine is pure and has no React in it. That is what makes it testable, and
+the tests are the reason the library can be edited without fear.
+
+## Three lifetimes, three scopes
+
+| Scope | Contains | Lifetime |
+|---|---|---|
+| Library | items, rules, containers, activities, people | durable; the valuable thing |
+| Trip | dates, conditions, who, site answers, sleeping arrangement | one per trip, many saved |
+| Session | checkboxes, collapsed groups | per trip, resettable |
+
+Session state is keyed by trip id, so checks cannot bleed between trips.
+
+## Two bugs designed out from the start
+
+**An empty condition list never means "always true."** `Rule.conds` is a
+non-empty tuple, so it cannot be written. Items that lose their last trigger are
+marked orphaned, excluded from every list, and surfaced rather than silently
+promoted. See ADR-001.
+
+**Global resets cannot outrank component styles.** Every selector in the reset is
+wrapped in `:where()` so it contributes zero specificity, and
+`scripts/audit-css.mjs` fails the build if a type selector escapes one. The same
+script checks WCAG AA contrast for every declared colour pair across all three
+themes. See ADR-005.
+
+## Testing
+
+```sh
+npm test
+```
+
+Covers `evalCondition` across every field type, both operators and negation;
+`evalQuantity` across every unit, the cap, rounding and float noise; `buildList`
+against golden fixtures — family car camping in summer, solo backcountry in
+shoulder season, winter hike-in, kayak — plus the degenerate cases: nobody
+selected, zero nights, empty library, and an item whose conditions were stripped.
+The library lint pass runs in tests and in the UI.
+
+## Build order
+
+- **Phase 1 — engine and skeleton.** *Done.* Types, condition and quantity
+  evaluation, the default library, list generation, grouping by container /
+  category / person / phase, safety gates, the lint pass, export and import,
+  offline shell.
+- **Phase 2 — the trip.** Dates, location, weather with fetch-as-proposal,
+  people, activities, the site questionnaire, sleeping arrangement, info panels
+  on every section, saved trips.
+- **Phase 3 — food.** Per-day meal plan, cooking/ingredients/eating outputs,
+  shopping list by store section, prep tasks, cold chain, weather contingency.
+- **Phase 4 — packing reality.** The load plan, load-order views, responsibility
+  assignment, the kid-facing list, the shakedown pass.
+- **Phase 5 — judgement.** Trip plan document, gear condition, jurisdiction and
+  seasonal prompts, group and multi-household logistics.
+- **Phase 6 — the loop.** Post-trip review feeding proposed rule edits.
+
+## Accessibility and physical context
+
+Used one-handed, at the back of a van, in the rain, in the dark, with cold hands.
+Minimum 44px touch targets (verified in a browser, not by eye), real checkbox
+semantics rather than buttons with `aria-pressed`, day / night / red-light
+themes, WCAG AA verified by script, reduced motion respected.

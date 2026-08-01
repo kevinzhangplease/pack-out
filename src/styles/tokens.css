@@ -1,0 +1,126 @@
+/*
+ * Design tokens.
+ *
+ * Register: field manual, load plan, gear tag, dry bag. Deep tarp blue,
+ * spruce, hi-vis yellow, pale lichen. Type should look like equipment.
+ *
+ * Three themes: day, night, and a red-light mode for keeping night vision
+ * while standing at the back of a van at 11pm.
+ *
+ * Every foreground/background pair named here is checked against WCAG AA by
+ * scripts/audit-css.mjs. Do not add a colour without adding it to that check.
+ */
+
+:root {
+  /* --- palette ------------------------------------------------------- */
+  --tarp-900: #0a1a2b;
+  --tarp-800: #0f2740;
+  --tarp-700: #163a5c;
+  --tarp-600: #1d4a72;
+  --tarp-400: #4d87b8;
+  --spruce-700: #1f4433;
+  --spruce-500: #2f6b4f;
+  --spruce-300: #6fa889;
+  --hivis-500: #f2c200;
+  --hivis-400: #ffd633;
+  --rust-500: #b3441c;
+  --lichen-100: #eef0e9;
+  --lichen-200: #dde1d5;
+  --lichen-300: #c3c9b8;
+  --lichen-500: #8b9280;
+  --ink-900: #14170f;
+  --ink-700: #2f3428;
+  --paper: #f7f8f4;
+
+  /* --- semantic, day ------------------------------------------------- */
+  --bg: var(--paper);
+  --bg-panel: #ffffff;
+  --bg-sunk: var(--lichen-100);
+  --fg: var(--ink-900);
+  --fg-muted: #4a5142;
+  --line: var(--lichen-300);
+  --line-strong: var(--lichen-500);
+  --accent: var(--tarp-600);
+  --accent-fg: #ffffff;
+  --ok: var(--spruce-500);
+  --warn: #8a5a00;
+  --danger: var(--rust-500);
+  --flag: var(--hivis-500);
+  --flag-fg: var(--ink-900);
+  --topbar-bg: var(--tarp-900);
+  --topbar-fg: #f2f5ef;
+  --topbar-muted: #b9c4b2;
+
+  /* --- type ---------------------------------------------------------- */
+  --font-display: ui-sans-serif, 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: 1.4375rem;
+  --step-3: 1.8125rem;
+
+  /* --- space and shape ----------------------------------------------- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --radius: 3px;
+
+  /* Used one-handed, in the rain, with cold hands. */
+  --touch: 48px;
+
+  --shadow: 0 1px 0 rgb(20 23 15 / 0.08), 0 2px 6px rgb(20 23 15 / 0.06);
+}
+
+:root[data-theme='night'] {
+  --bg: #0a0d0c;
+  --bg-panel: #141a19;
+  --bg-sunk: #0d1211;
+  --fg: #e6ebe2;
+  --fg-muted: #a3ad9c;
+  --line: #2a332f;
+  --line-strong: #63756d;
+  --accent: #7fb6e0;
+  --accent-fg: #06131f;
+  --ok: #74c79a;
+  --warn: #e0b355;
+  --danger: #f08155;
+  --flag: var(--hivis-400);
+  --flag-fg: #14170f;
+  --topbar-bg: #05100a;
+  --topbar-fg: #dfe6da;
+  --topbar-muted: #9aa694;
+  --shadow: none;
+}
+
+/*
+ * Red-light mode. Everything is a shade of red on near-black, because any
+ * other hue costs you the dark adaptation you just spent twenty minutes on.
+ */
+:root[data-theme='redlight'] {
+  --bg: #0b0000;
+  --bg-panel: #170202;
+  --bg-sunk: #0f0101;
+  --fg: #ff8f7a;
+  --fg-muted: #c26a5c;
+  --line: #3a1010;
+  --line-strong: #a5443c;
+  --accent: #ff6b52;
+  --accent-fg: #170202;
+  --ok: #ff8f7a;
+  --warn: #ffab8f;
+  --danger: #ff4d3d;
+  --flag: #ff6b52;
+  --flag-fg: #170202;
+  /* No blue and no white up here: a bright bar costs the dark adaptation
+     the rest of this theme exists to protect. */
+  --topbar-bg: #120100;
+  --topbar-fg: #ff8f7a;
+  --topbar-muted: #c26a5c;
+  --shadow: none;
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pack Out">
+  <rect width="512" height="512" fill="#0a1a2b"/>
+  <!-- A tarp ridge over a grommet: shelter first, everything else after. -->
+  <path d="M96 320 256 176 416 320" fill="none" stroke="#f2c200" stroke-width="34" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M96 320h320" fill="none" stroke="#2f6b4f" stroke-width="26" stroke-linecap="round"/>
+  <circle cx="256" cy="248" r="34" fill="none" stroke="#f2c200" stroke-width="22"/>
+</svg>

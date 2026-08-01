@@ -1,0 +1,90 @@
+/*
+ * Global reset.
+ *
+ * EVERY selector in this file is wrapped in :where() so that it contributes
+ * ZERO specificity. This is not stylistic.
+ *
+ * The bug this prevents: a shared reset like `.app button { color: inherit }`
+ * has specificity 0,1,1 and silently outranks every single-class component rule
+ * you subsequently write, which is how navigation tabs end up invisible with no
+ * error anywhere. Wrapped in :where(), the same rule is 0,0,0 and any component
+ * class beats it.
+ *
+ * scripts/audit-css.mjs fails the build if a type selector escapes a :where().
+ */
+
+:where(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+:where(html) {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+:where(body) {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.45;
+}
+
+:where(h1, h2, h3, h4) {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-stretch: condensed;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+
+:where(p, ul, ol, figure) {
+  margin: 0;
+}
+
+:where(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+
+:where(button, input, select, textarea) {
+  font: inherit;
+  color: inherit;
+}
+
+:where(button) {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+:where(a) {
+  color: var(--accent);
+}
+
+:where(img, svg) {
+  display: block;
+  max-width: 100%;
+}
+
+:where(code, kbd, samp) {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+:where(:focus-visible) {
+  outline: 3px solid var(--flag);
+  outline-offset: 2px;
+}
+
+/* Reduced motion is respected, not merely acknowledged. */
+@media (prefers-reduced-motion: reduce) {
+  :where(*, *::before, *::after) {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
