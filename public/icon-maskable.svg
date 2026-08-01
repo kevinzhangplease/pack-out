@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pack Out">
+  <!--
+    The maskable variant. Android applies its own mask — circle, squircle,
+    teardrop, whatever the launcher uses — and only the centre 80% is
+    guaranteed to survive it. So: no rounded corners of our own, background
+    bled to every edge, and the mark scaled into the safe zone.
+  -->
+  <rect width="512" height="512" fill="#0f1115"/>
+  <g transform="translate(256 256) scale(0.66) translate(-256 -256)">
+    <path
+      d="M256 86 60 412h150l46-104 46 104h150Z"
+      fill="#f2c200"
+      stroke="#f2c200"
+      stroke-width="8"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>

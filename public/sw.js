@@ -8,8 +8,17 @@
  * unusable when there is not.
  */
 
-const CACHE = 'pack-out-v1';
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icon.svg'];
+// Bumping the cache name is what retires the old entries; the activate handler
+// deletes anything that is not this one.
+const CACHE = 'pack-out-v2';
+const SHELL = [
+  '/',
+  '/index.html',
+  '/manifest.webmanifest',
+  '/icon.svg',
+  '/favicon.ico',
+  '/apple-touch-icon.png',
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

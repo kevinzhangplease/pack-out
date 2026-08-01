@@ -11,8 +11,15 @@
       name="description"
       content="A transparent, editable rules engine for camping trips, with a packing app on top of it."
     />
-    <link rel="icon" href="/icon.svg" type="image/svg+xml" sizes="any" />
-    <link rel="apple-touch-icon" href="/icon.svg" />
+    <!--
+      Three icons, because three different consumers ask for three things:
+      the SVG scales for modern browsers, favicon.ico answers the browsers and
+      crawlers that still request that exact path, and iOS ignores both of them
+      for Add to Home Screen and needs a PNG.
+    -->
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
   </head>
   <body>

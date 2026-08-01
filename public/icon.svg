@@ -1,22 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pack Out">
   <!--
-    The grommet and the ridge line: the same mark as the brand in the top bar,
-    so the tab icon and the app agree. Two shapes only, because a favicon is
-    read at 16px and anything finer turns to mush at that size.
-  -->
-  <defs>
-    <clipPath id="squircle">
-      <path d="M256 8c150 0 248 98 248 248s-98 248-248 248S8 406 8 256 106 8 256 8Z"/>
-    </clipPath>
-  </defs>
+    An A-frame under a tarp: one solid shape, because a favicon is read at 16px
+    in a tab strip and anything finer than one shape turns to mush there. The
+    earlier mark paired a ridge line with a grommet ring and the two collapsed
+    into a blob — this was chosen by rendering the candidates at 16px and
+    looking, not by judging them at 512.
 
-  <g clip-path="url(#squircle)">
-    <rect width="512" height="512" rx="112" fill="#0f1115"/>
-    <!-- Tarp ridge, nose up. Reads as a shelter even at a very small size. -->
-    <path d="M96 356 256 196 416 356" fill="none" stroke="#4c9eff" stroke-width="40"
-          stroke-linejoin="round" stroke-linecap="round"/>
-    <!-- The grommet. -->
-    <circle cx="256" cy="300" r="46" fill="#0f1115"/>
-    <circle cx="256" cy="300" r="46" fill="none" stroke="#f2c200" stroke-width="26"/>
-  </g>
+    The base is splayed wider than a plain triangle and the door notch cuts up
+    into it, so at larger sizes it reads as a shelter rather than a letter A.
+  -->
+  <rect width="512" height="512" rx="112" fill="#0f1115"/>
+  <path
+    d="M256 86 60 412h150l46-104 46 104h150Z"
+    fill="#f2c200"
+    stroke="#f2c200"
+    stroke-width="8"
+    stroke-linejoin="round"
+  />
 </svg>
