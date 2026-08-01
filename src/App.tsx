@@ -7,6 +7,7 @@ import { PrepView } from './views/PrepView';
 import { LoadPlanView } from './views/LoadPlanView';
 import { KidListView } from './views/KidListView';
 import { GoView } from './views/GoView';
+import { ReviewView } from './views/ReviewView';
 import { LibraryView } from './views/LibraryView';
 import { DataView } from './views/DataView';
 
@@ -21,13 +22,13 @@ import { DataView } from './views/DataView';
  */
 type Destination = 'plan' | 'shop' | 'prep' | 'load' | 'go' | 'review' | 'library' | 'data';
 
-const WORKFLOW: { id: Destination; label: string; phase: number }[] = [
-  { id: 'plan', label: 'Plan', phase: 1 },
-  { id: 'shop', label: 'Food', phase: 1 },
-  { id: 'prep', label: 'Prep', phase: 1 },
-  { id: 'load', label: 'Load', phase: 1 },
-  { id: 'go', label: 'Go', phase: 1 },
-  { id: 'review', label: 'Review', phase: 6 },
+const WORKFLOW: { id: Destination; label: string }[] = [
+  { id: 'plan', label: 'Plan' },
+  { id: 'shop', label: 'Food' },
+  { id: 'prep', label: 'Prep' },
+  { id: 'load', label: 'Load' },
+  { id: 'go', label: 'Go' },
+  { id: 'review', label: 'Review' },
 ];
 
 const THEMES: { id: Theme; label: string }[] = [
@@ -53,8 +54,6 @@ export function App() {
     setFocusItemId(itemId);
     setAt('library');
   };
-
-  const pending = WORKFLOW.find((step) => step.id === at && step.phase > 1);
 
   return (
     <div className="app">
@@ -151,18 +150,9 @@ export function App() {
           </>
         )}
         {at === 'go' && <GoView />}
+        {at === 'review' && <ReviewView onEditItem={goToItem} />}
         {at === 'library' && <LibraryView focusItemId={focusItemId} />}
         {at === 'data' && <DataView />}
-        {pending && (
-          <section className="panel panel--pending">
-            <h2 className="panel__title">{pending.label} arrives in phase {pending.phase}</h2>
-            <p className="panel__lede">
-              Not built yet, and showing you an empty shell that looks functional would be worse
-              than saying so. The engine underneath is complete — everything on this screen will be
-              generated from the same rules the Load list already uses.
-            </p>
-          </section>
-        )}
       </main>
     </div>
   );

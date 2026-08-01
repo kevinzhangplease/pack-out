@@ -30,6 +30,7 @@ export function defaultLibrary(): Library {
     vehicles: SEED_VEHICLES,
     meals: DEFAULT_MEALS,
     pantry: DEFAULT_PANTRY,
+    dismissedProposals: [],
   });
 }
 

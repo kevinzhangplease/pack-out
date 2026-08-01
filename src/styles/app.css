@@ -1785,3 +1785,243 @@
   cursor: pointer;
   color: var(--accent);
 }
+
+/* --- the condition builder --------------------------------------------- */
+
+.builder {
+  padding: var(--sp-3);
+  margin-top: var(--sp-2);
+  background: var(--bg-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+/* The English is the thing you actually check, so it leads. */
+.builder__english {
+  padding: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  background: var(--bg-panel);
+  border-left: 3px solid var(--accent);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.builder__mode {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-3);
+}
+
+.builder__conds {
+  display: grid;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
+.builder__group {
+  padding: var(--sp-2);
+  border: 2px dashed var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.builder__grouphead {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-2);
+}
+
+.builder__grouplabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.builder__add {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.builder__note {
+  margin-top: var(--sp-2);
+  font-size: var(--step--1);
+  color: var(--fg-muted);
+  border-left: 2px solid var(--warn);
+  padding-left: var(--sp-2);
+}
+
+.leaf {
+  padding: var(--sp-2);
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.leaf__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.input--num {
+  max-width: 6rem;
+}
+
+.leaf__english {
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+}
+
+.leaf__warn {
+  margin-top: var(--sp-2);
+  font-size: var(--step--1);
+  color: var(--warn);
+}
+
+.chips--values {
+  margin-top: var(--sp-2);
+  margin-bottom: 0;
+}
+
+.chip--sm {
+  min-height: 44px;
+  padding: 0 var(--sp-2);
+  font-size: 0.78rem;
+}
+
+.chip__age {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  opacity: 0.8;
+}
+
+/* --- activities -------------------------------------------------------- */
+
+.alternates {
+  display: grid;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-3);
+}
+
+.alternate {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-1);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step--1);
+}
+
+.alternate__name {
+  font-weight: 600;
+}
+
+.alternate__text {
+  color: var(--fg-muted);
+}
+
+.alternate__text--missing {
+  color: var(--warn);
+}
+
+/* --- the review loop --------------------------------------------------- */
+
+.panel--proposals {
+  border-left: 5px solid var(--accent);
+}
+
+.proposals {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.proposal {
+  padding: var(--sp-3);
+  background: var(--bg-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.proposal__title {
+  font-size: var(--step-0);
+  margin-bottom: var(--sp-1);
+}
+
+.proposal__rationale {
+  font-size: var(--step--1);
+  color: var(--fg-muted);
+  margin-bottom: var(--sp-2);
+}
+
+/* A rule change reads as a diff, because that is what it is. */
+.proposal__diff {
+  padding: var(--sp-2);
+  margin-bottom: var(--sp-2);
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.proposal__before {
+  color: var(--danger);
+}
+
+.proposal__after {
+  color: var(--ok);
+}
+
+.proposal__actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.proposal__advisory {
+  font-size: var(--step--1);
+  color: var(--warn);
+}
+
+.review__group {
+  margin-top: var(--sp-4);
+}
+
+.review__rows {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.review__row {
+  display: grid;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.review__name {
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+.segmented--wrap {
+  flex-wrap: wrap;
+  border: 0;
+  gap: var(--sp-1);
+}
+
+.segmented--wrap .segmented__btn {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  font-size: 0.68rem;
+}

@@ -4,7 +4,15 @@ import { lintLibrary, lintSummary } from '../engine/lint';
 import { buildList } from '../engine/build';
 import { ruleToEnglish, namesFrom, qtyToEnglish } from '../engine/english';
 import { upsertItem } from '../engine/mutations';
-import { GEAR_CONDITIONS, PHASE_LABELS, type GearCondition, type Item } from '../data/types';
+import { ConditionBuilder } from '../components/ConditionBuilder';
+import {
+  GEAR_CONDITIONS,
+  PHASE_LABELS,
+  type GearCondition,
+  type Item,
+  type Library,
+  type Rule,
+} from '../data/types';
 
 /**
  * The library is the valuable thing in the app, so this view leads with its
@@ -92,8 +100,12 @@ export function LibraryView({ focusItemId }: { focusItemId: string | null }) {
             packing={packing.has(item.id)}
             problems={byItem.get(item.id)?.map((f) => f.message) ?? []}
             focused={focusItemId === item.id}
+            library={library}
             onGearChange={(gear) =>
               setLibrary(upsertItem(library, { ...item, gear }), `update ${item.name}`)
+            }
+            onRuleChange={(rule) =>
+              setLibrary(upsertItem(library, { ...item, rule, orphaned: false }), `edit the rule for ${item.name}`)
             }
           />
         ))}
@@ -109,14 +121,18 @@ function ItemCard({
   packing,
   problems,
   focused,
+  library,
   onGearChange,
+  onRuleChange,
 }: {
   item: Item;
   english: string;
   packing: boolean;
   problems: string[];
   focused: boolean;
+  library: Library;
   onGearChange: (gear: Item['gear']) => void;
+  onRuleChange: (rule: Rule) => void;
 }) {
   return (
     <li
@@ -130,6 +146,10 @@ function ItemCard({
         </span>
       </div>
       <p className="item-card__rule">{english}</p>
+      <details className="item-card__gear">
+        <summary>Edit this rule</summary>
+        <ConditionBuilder rule={item.rule} library={library} onChange={onRuleChange} />
+      </details>
       <p className="item-card__qty">{qtyToEnglish(item.qty)}</p>
       <p className="item-card__meta">
         {item.category} · {item.container} · {PHASE_LABELS[item.phase]} · {item.kind}

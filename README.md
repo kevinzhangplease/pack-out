@@ -30,7 +30,7 @@ Trip (inputs) ──► deriveFacts ──► buildList ──► grouped views
 | Directory | What lives there |
 |---|---|
 | `src/data/` | Types, the default library, the authoring DSL, schema and migrations, golden fixtures |
-| `src/engine/` | Pure functions over plain data: facts, condition and quantity evaluation, list building, lint, diff, gates, text export |
+| `src/engine/` | Pure functions over plain data: facts, condition and quantity evaluation, list building, lint, diff, gates, meals, load plan, judgement, the review loop, text export |
 | `src/state/` | Three storage scopes, kept separate: library, trips, session |
 | `src/views/` | One per navigation destination |
 | `src/components/` | Shared pieces, including the interpretation trail |
@@ -74,7 +74,10 @@ Covers `evalCondition` across every field type, both operators and negation;
 against golden fixtures — family car camping in summer, solo backcountry in
 shoulder season, winter hike-in, kayak — plus the degenerate cases: nobody
 selected, zero nights, empty library, and an item whose conditions were stripped.
-The library lint pass runs in tests and in the UI.
+The library lint pass runs in tests and in the UI. 360 tests in all, covering
+the food engine, the load plan and shakedown, the judgement prompts, the five
+schema migrations, and the review loop — including a regression test for a
+duplicated trip fabricating evidence for the learning loop.
 
 ## Build order
 
@@ -98,7 +101,11 @@ The library lint pass runs in tests and in the UI.
   completeness check, jurisdiction prompts, seasonal hazards keyed to the dates,
   camp job assignment with clash detection, multi-household gear splitting,
   editable gear condition, per-person medical details.
-- **Phase 6 — the loop.** Post-trip review feeding proposed rule edits.
+- **Phase 6 — the loop.** *Done.* Post-trip review capture, and proposals
+  computed across every completed review: tighten or loosen a threshold, mark
+  gear for repair, adjust a quantity. Each names the trips it came from and
+  shows the rule change as a plain-English diff you accept or dismiss. Plus the
+  condition builder, so every rule is editable in the UI.
 
 ## Accessibility and physical context
 

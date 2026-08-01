@@ -59,11 +59,39 @@ export function ActivityEditor({ trip }: { trip: Trip }) {
                 <span className="chip__count" title={`${count} items reference this`}>
                   {count}
                 </span>
+                {activity.minRole && activity.minRole !== 'toddler' && (
+                  <span className="chip__age" title="Youngest role this suits">
+                    {activity.minRole}+
+                  </span>
+                )}
               </label>
             </li>
           );
         })}
       </ul>
+
+      {/*
+        An activity with no rainy-day alternate makes the day plan fiction on a
+        coast where rain is the default. Say so rather than leaving it blank.
+      */}
+      {trip.activityIds.length > 0 && (
+        <ul className="alternates">
+          {library.activities
+            .filter((a) => trip.activityIds.includes(a.id))
+            .map((activity) => (
+              <li key={activity.id} className="alternate">
+                <span className="alternate__name">{activity.name}</span>
+                {activity.rainyAlternate ? (
+                  <span className="alternate__text">If it rains: {activity.rainyAlternate}</span>
+                ) : (
+                  <span className="alternate__text alternate__text--missing">
+                    No rainy-day alternate. On this coast that makes the day plan fiction.
+                  </span>
+                )}
+              </li>
+            ))}
+        </ul>
+      )}
 
       {justAdded && (
         <p className="notice notice--bad" role="status">

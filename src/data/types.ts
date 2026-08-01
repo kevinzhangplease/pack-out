@@ -343,6 +343,12 @@ export interface Library {
   vehicles: Vehicle[];
   meals: Meal[];
   /**
+   * Proposals the user has said no to. Library-scoped on purpose: a decision
+   * about a rule outlives the trip that prompted it, and a proposal that keeps
+   * coming back is a proposal you stop reading.
+   */
+  dismissedProposals: string[];
+  /**
    * Pantry staples: name -> is it in stock. Track stock, not presence, so salt
    * and oil stop appearing on the shopping list every single trip.
    */
@@ -389,6 +395,7 @@ export interface Trip {
   jurisdiction: Jurisdiction;
   campRoles: CampRole[];
   plan: TripPlan;
+  review: TripReview;
   /**
    * Deliberately left behind on this trip after a shakedown. These are shown
    * struck through rather than removed, because a decision is not the same as
@@ -654,4 +661,45 @@ export interface CampRole {
 export interface Household {
   id: Id;
   name: string;
+}
+
+// ---------------------------------------------------------------------------
+// The learning loop
+//
+// Because rules are data, a post-trip review can propose specific rule edits
+// rather than just recording regrets. Nothing else in this app compounds the
+// way this does.
+// ---------------------------------------------------------------------------
+
+export const REVIEW_OUTCOMES = [
+  'used',
+  'unused',
+  'missing',
+  'broke',
+  'too-much',
+  'not-enough',
+] as const;
+export type ReviewOutcome = (typeof REVIEW_OUTCOMES)[number];
+
+export const REVIEW_OUTCOME_LABELS: Record<ReviewOutcome, string> = {
+  used: 'Used it',
+  unused: 'Never touched it',
+  missing: 'Wanted it, did not have it',
+  broke: 'It broke',
+  'too-much': 'Brought too much',
+  'not-enough': 'Ran out',
+};
+
+export interface ReviewEntry {
+  /** An item in the library. */
+  itemId?: Id;
+  /** Something that was not in the library at all. */
+  missingName?: string;
+  outcome: ReviewOutcome;
+  note?: string;
+}
+
+export interface TripReview {
+  completedISO?: string;
+  entries: ReviewEntry[];
 }

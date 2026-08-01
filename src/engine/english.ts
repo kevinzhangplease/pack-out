@@ -78,6 +78,13 @@ const SET_NOUNS: Record<SetField, string> = {
   rack: 'the racks',
 };
 
+/**
+ * A trip has exactly one style, transport and forecast, so those read "is any
+ * of". The rest are collections and read "include any of". The English is the
+ * thing people actually check, so it has to agree.
+ */
+const SINGULAR_SET_FIELDS = new Set<SetField>(['style', 'transport', 'precip']);
+
 function joinList(parts: string[], conjunction: 'or' | 'and'): string {
   if (parts.length === 0) return 'nothing';
   if (parts.length === 1) return parts[0]!;
@@ -99,7 +106,14 @@ export function condToEnglish(cond: Cond, names: Names = PLAIN_NAMES): string {
         : `NOT: ${SITE_QUESTION_LABELS[cond.question]}`;
     case 'set': {
       const labels = cond.values.map((v) => names.label(cond.field, v));
-      const verb = cond.not ? 'include none of' : 'include any of';
+      const singular = SINGULAR_SET_FIELDS.has(cond.field);
+      const verb = singular
+        ? cond.not
+          ? 'is none of'
+          : 'is any of'
+        : cond.not
+          ? 'include none of'
+          : 'include any of';
       return `${SET_NOUNS[cond.field]} ${verb} ${joinList(labels, 'or')}`;
     }
     case 'group': {

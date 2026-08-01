@@ -72,6 +72,7 @@ export const FAMILY_CAR_SUMMER: Trip = {
     contactPhone: '555-0142',
     overdue: '8pm Monday 13 July',
   },
+  review: { entries: [] },
 };
 
 export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
@@ -102,6 +103,7 @@ export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
   jurisdiction: 'unknown',
   campRoles: [],
   plan: BLANK_PLAN,
+  review: { entries: [] },
 };
 
 export const WINTER_HIKE_IN: Trip = {
@@ -130,6 +132,7 @@ export const WINTER_HIKE_IN: Trip = {
   jurisdiction: 'unknown',
   campRoles: [],
   plan: BLANK_PLAN,
+  review: { entries: [] },
 };
 
 export const KAYAK_TRIP: Trip = {
@@ -159,6 +162,7 @@ export const KAYAK_TRIP: Trip = {
   jurisdiction: 'unknown',
   campRoles: [],
   plan: BLANK_PLAN,
+  review: { entries: [] },
 };
 
 /** Degenerate: nobody selected. */
@@ -176,6 +180,7 @@ export const NOBODY: Trip = {
   jurisdiction: 'unknown',
   campRoles: [],
   plan: BLANK_PLAN,
+  review: { entries: [] },
 };
 
 /** Degenerate: zero nights. */

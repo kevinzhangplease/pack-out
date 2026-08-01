@@ -35,6 +35,15 @@ export function PlanView({ onEditItem }: { onEditItem: (itemId: string) => void 
 
   const nights = nightsBetween(trip.startDate, trip.endDate);
 
+  /**
+   * A new trip inherits the durable choices — style, vehicle, who packs which
+   * container — and NOTHING that belongs to the trip that just happened.
+   *
+   * The review in particular must reset. Carrying a completed review forward
+   * would hand the learning loop a second, fabricated data point with the same
+   * verdicts, and it would start proposing rule edits from evidence that does
+   * not exist.
+   */
   const newTrip = () => {
     const id = counterId('trip', trips.map((t) => t.id));
     const next: Trip = {
@@ -45,6 +54,13 @@ export function PlanView({ onEditItem }: { onEditItem: (itemId: string) => void 
       activityIds: [],
       shelters: [],
       site: {},
+      mealPlan: [],
+      leftBehind: [],
+      coveredBy: {},
+      households: [],
+      campRoles: [],
+      review: { entries: [] },
+      plan: { ...trip.plan, overdue: '', sharedAtISO: undefined },
     };
     setTrips([...trips, next], 'add a trip');
     setActiveTrip(id);

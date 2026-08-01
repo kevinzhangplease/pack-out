@@ -12,7 +12,7 @@ import type { Library, Trip } from './types';
  * data written by an older version of the app, which by definition does not
  * match today's types.
  */
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export interface Migration {
   to: number;
@@ -115,6 +115,22 @@ export const MIGRATIONS: Migration[] = [
       if (Array.isArray(items)) {
         for (const item of items) delete item.coveredBy;
       }
+      return data;
+    },
+  },
+  {
+    to: 5,
+    describe: 'added post-trip reviews and dismissed rule proposals',
+    migrate(data) {
+      const trips = data.trips;
+      if (Array.isArray(trips)) {
+        for (const trip of trips as Record<string, unknown>[]) {
+          if (!trip.review || typeof trip.review !== 'object') trip.review = { entries: [] };
+        }
+      }
+      const library = data.library as Record<string, unknown> | undefined;
+      const target = library ?? (Array.isArray(data.items) ? data : undefined);
+      if (target && !Array.isArray(target.dismissedProposals)) target.dismissedProposals = [];
       return data;
     },
   },

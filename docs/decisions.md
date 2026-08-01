@@ -330,3 +330,56 @@ failure mode of a prompt: it implies a check nobody made. Same principle as
 ADR-004. Spring and fall bears are separate hazards with different advice
 because they are different problems — green-up on valley bottoms versus
 hyperphagia at berry patches.
+
+---
+
+## ADR-020 — A proposal must name its evidence, or be advisory
+
+**Context.** Phase 6 turns post-trip reviews into rule edits. The temptation is
+to make every observation produce an edit.
+
+**Decision.** Each proposal carries the trips it came from and the values
+observed on them: *"Packed and never touched on 2 trips (July at Porteau,
+August at Alice Lake). On those trips daytimeHigh was 24, 26."* Where no
+defensible edit can be computed — an item with no numeric threshold, a thing
+that was never in the library at all — the proposal has `apply: null` and says
+so, rather than inventing a change.
+
+Thresholds also differ by direction. Two "unused" reports are needed before
+tightening; one "missing" report is enough to propose loosening. Carrying
+something you did not need costs a little space; not having it can end the trip.
+
+**Consequence.** The app never silently edits the library. Every change is an
+offered diff in plain English that the user accepts.
+
+---
+
+## ADR-021 — Once you have acted on the evidence, the loop goes quiet
+
+**Context.** After applying a tightening edit, the same two unused reports still
+exist, and a naive implementation re-raises them — first as the same proposal,
+then as an advisory once the threshold move became a no-op.
+
+**Decision.** When the computed threshold equals the current one, the item is
+skipped entirely — not merely skipped for that proposal kind.
+
+**Rationale.** Re-raising settled evidence is how a suggestions panel becomes
+something you stop reading, and a panel nobody reads is worse than no panel.
+
+---
+
+## ADR-022 — A new trip inherits durable choices and nothing that happened
+
+**Context.** Creating a trip copied the previous one wholesale, which carried
+the previous trip's completed review forward.
+
+**Decision.** A new trip keeps the style, the vehicle, the racks and who packs
+which container. It resets attendees, activities, shelters, site answers, meal
+plan, left-behind, coverage, households, camp roles and — critically — the
+review.
+
+**Rationale.** Found in browser verification. A duplicated completed review
+would have handed the learning loop a second, fabricated observation of the same
+event, which is exactly enough to trip the two-report threshold and generate a
+rule edit from evidence that does not exist. There is a regression test that
+demonstrates the fabrication and then the fix.
