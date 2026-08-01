@@ -1680,3 +1680,108 @@
   border: 2px solid var(--ok);
   border-radius: var(--radius);
 }
+
+/* --- the Go screen ----------------------------------------------------- */
+
+.field--wide {
+  grid-column: 1 / -1;
+}
+
+.input--area {
+  min-height: 4.5rem;
+  padding: var(--sp-2) var(--sp-3);
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.panel--plan {
+  border-left: 5px solid var(--ok);
+}
+
+.panel--plan.is-incomplete {
+  border-left-color: var(--warn);
+}
+
+/* The plan reads as a document, because that is what gets sent. */
+.plan__preview {
+  margin-top: var(--sp-4);
+  padding: var(--sp-3);
+  background: var(--bg-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  max-height: 26rem;
+}
+
+.notes {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+
+.note {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step--1);
+}
+
+.note__topic {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.hazards {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+/* A hazard card reads like a trail sign: rule above, text below. */
+.hazard {
+  padding-top: var(--sp-2);
+  border-top: 2px solid var(--flag);
+}
+
+.hazard__title {
+  font-size: var(--step-0);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hazard__detail {
+  font-size: var(--step--1);
+  margin: var(--sp-1) 0;
+}
+
+.hazard__check {
+  font-size: var(--step--1);
+  color: var(--fg-muted);
+  border-left: 2px solid var(--line);
+  padding-left: var(--sp-2);
+}
+
+.person__detail,
+.item-card__gear {
+  width: 100%;
+  margin-top: var(--sp-2);
+  font-size: var(--step--1);
+}
+
+.person__detail > :where(summary),
+.item-card__gear > :where(summary) {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--accent);
+}

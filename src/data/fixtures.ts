@@ -1,4 +1,13 @@
-import type { MealPlanEntry, Trip } from './types';
+import type { MealPlanEntry, Trip, TripPlan } from './types';
+
+const BLANK_PLAN: TripPlan = {
+  routeNotes: '',
+  bailOutPoints: '',
+  nearestHospital: '',
+  contactName: '',
+  contactPhone: '',
+  overdue: '',
+};
 
 /**
  * A real three-night plan: trivial arrival dinner (frozen chili, one pot, which
@@ -51,6 +60,18 @@ export const FAMILY_CAR_SUMMER: Trip = {
   mealPlan: FAMILY_MEAL_PLAN,
   packedBy: { 'kitchen-bin': 'p-adult-1', 'sleep-duffel': 'p-adult-2', 'cooler': 'p-adult-1' },
   leftBehind: [],
+  coveredBy: {},
+  households: [],
+  jurisdiction: 'bc-parks',
+  campRoles: [],
+  plan: {
+    routeNotes: 'Highway 99 north, site 42. Day hike to the lookout on day 2.',
+    bailOutPoints: 'Britannia Beach (20 min south), Squamish General (35 min north).',
+    nearestHospital: 'Squamish General Hospital, 38140 Behrner Dr',
+    contactName: 'Sam',
+    contactPhone: '555-0142',
+    overdue: '8pm Monday 13 July',
+  },
 };
 
 export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
@@ -76,6 +97,11 @@ export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
   ],
   packedBy: {},
   leftBehind: [],
+  coveredBy: {},
+  households: [],
+  jurisdiction: 'unknown',
+  campRoles: [],
+  plan: BLANK_PLAN,
 };
 
 export const WINTER_HIKE_IN: Trip = {
@@ -99,6 +125,11 @@ export const WINTER_HIKE_IN: Trip = {
   ],
   packedBy: {},
   leftBehind: [],
+  coveredBy: {},
+  households: [],
+  jurisdiction: 'unknown',
+  campRoles: [],
+  plan: BLANK_PLAN,
 };
 
 export const KAYAK_TRIP: Trip = {
@@ -123,6 +154,11 @@ export const KAYAK_TRIP: Trip = {
   ],
   packedBy: {},
   leftBehind: [],
+  coveredBy: {},
+  households: [],
+  jurisdiction: 'unknown',
+  campRoles: [],
+  plan: BLANK_PLAN,
 };
 
 /** Degenerate: nobody selected. */
@@ -135,6 +171,11 @@ export const NOBODY: Trip = {
   mealPlan: [],
   packedBy: {},
   leftBehind: [],
+  coveredBy: {},
+  households: [],
+  jurisdiction: 'unknown',
+  campRoles: [],
+  plan: BLANK_PLAN,
 };
 
 /** Degenerate: zero nights. */

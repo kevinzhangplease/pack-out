@@ -3,6 +3,7 @@ import { useStore } from '../state/store';
 import { useFood } from '../state/useFood';
 import { groupLines, type GroupBy, type ListLine } from '../engine/build';
 import { applyLeftBehind, byResponsibility } from '../engine/load';
+import { applyCoverage } from '../engine/judgement';
 import { evaluateGates, listIsQualified } from '../engine/gates';
 import { listToText } from '../engine/textExport';
 import { RuleTraceView } from '../components/RuleTrace';
@@ -56,7 +57,11 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
 
   // Anything deliberately left behind after a shakedown is off the list, but
   // still visible on the Load plan screen rather than silently gone.
-  const { going, dropped } = applyLeftBehind(result.lines, trip.leftBehind);
+  const { going: notDropped, dropped } = applyLeftBehind(result.lines, trip.leftBehind);
+  // Another household is bringing these. Off the list, but named on the Go
+  // screen rather than silently absent.
+  const coverage = applyCoverage(notDropped, trip);
+  const going = coverage.ours;
 
   const visible = going.filter((l) => showResident || l.item.kind !== 'vehicle-resident');
 
@@ -192,6 +197,14 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
           </section>
         );
       })}
+
+      {coverage.theirs.length > 0 && (
+        <p className="editor__note">
+          {coverage.theirs.length} item{coverage.theirs.length === 1 ? '' : 's'} covered by another
+          household — {(coverage.savedWeight_g / 1000).toFixed(1)} kg you are not carrying. Named on
+          the Go screen.
+        </p>
+      )}
 
       {dropped.length > 0 && (
         <p className="editor__note">

@@ -107,6 +107,96 @@ export function PeopleEditor({ trip }: { trip: Trip }) {
                 ))}
               </select>
 
+              <details className="person__detail">
+                <summary>Medical and weight</summary>
+                <div className="fields">
+                  <label className="field">
+                    <span className="field__label">Allergies</span>
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="nuts, dairy"
+                      value={(person.allergies ?? []).join(', ')}
+                      onChange={(e) =>
+                        setLibrary(
+                          upsertPerson(library, {
+                            ...person,
+                            allergies: e.target.value
+                              .split(',')
+                              .map((a) => a.trim())
+                              .filter(Boolean),
+                          }),
+                          `set allergies for ${person.name}`,
+                        )
+                      }
+                    />
+                    <span className="field__hint">
+                      Checked against every ingredient on the meal plan and printed on the trip plan.
+                    </span>
+                  </label>
+                  <label className="field">
+                    <span className="field__label">Medications</span>
+                    <input
+                      type="text"
+                      className="input"
+                      value={(person.medications ?? []).join(', ')}
+                      onChange={(e) =>
+                        setLibrary(
+                          upsertPerson(library, {
+                            ...person,
+                            medications: e.target.value
+                              .split(',')
+                              .map((m) => m.trim())
+                              .filter(Boolean),
+                          }),
+                          `set medications for ${person.name}`,
+                        )
+                      }
+                    />
+                  </label>
+                  <label className="field">
+                    <span className="field__label">Body weight (kg)</span>
+                    <input
+                      type="number"
+                      min="0"
+                      className="input"
+                      value={person.bodyWeight_kg ?? ''}
+                      onChange={(e) =>
+                        setLibrary(
+                          upsertPerson(library, {
+                            ...person,
+                            bodyWeight_kg: e.target.value ? Number(e.target.value) : undefined,
+                          }),
+                          `set body weight for ${person.name}`,
+                        )
+                      }
+                    />
+                    <span className="field__hint">
+                      Only the shakedown pass reads this. Without it the pass has to guess.
+                    </span>
+                  </label>
+                  <label className="field">
+                    <span className="field__label">Appetite</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      className="input"
+                      value={person.appetite ?? 1}
+                      onChange={(e) =>
+                        setLibrary(
+                          upsertPerson(library, { ...person, appetite: Number(e.target.value) }),
+                          `set appetite for ${person.name}`,
+                        )
+                      }
+                    />
+                    <span className="field__hint">
+                      Multiplies their role s eater unit. 1 means as expected.
+                    </span>
+                  </label>
+                </div>
+              </details>
+
               {confirming === person.id ? (
                 <span className="editor__confirm">
                   <span className="editor__impact">

@@ -274,3 +274,59 @@ trip's own.
 **Rationale.** Found in browser verification. The switch exists precisely
 because you drive to a trailhead — and the moment you are looking at the pack is
 exactly the moment the weight question matters.
+
+---
+
+## ADR-017 — `coveredBy` belongs to the trip, not the library
+
+**Context.** `Item.coveredBy` was added to the library in phase 1 as cheap
+groundwork for multi-household support (ADR-009). Building the feature showed
+the placement was wrong.
+
+**Decision.** Coverage moved to `Trip.coveredBy`, a map from item id to
+household id, alongside `Trip.households`. The library field is deleted by the
+v4 migration.
+
+**Rationale.** Who brings the stove is a fact about one weekend. Putting it on
+the item made it durable, so a decision made for one trip with one family would
+silently apply to every subsequent trip — the exact class of bug the three-scope
+separation exists to prevent. The original ADR was right that the field costs
+little; it was wrong about which scope it belonged in.
+
+---
+
+## ADR-018 — Coverage and left-behind items are shown, never silently absent
+
+**Context.** Three features now remove things from the packing list: leaving
+gear behind after a shakedown, another household bringing it, and (rejected)
+inventory state.
+
+**Decision.** The first two remove the item from the list and show it in a
+named, struck-through section — "left behind on purpose", "not on your list,
+because they have it" — with a one-tap way back. Inventory state never removes
+anything at all.
+
+**Rationale.** What you are relying on somebody else for is precisely what gets
+forgotten, and an item that vanished for a reason you cannot see is
+indistinguishable from an item that never qualified. A missing household is
+treated as no coverage: better to pack a second stove than to leave the only one
+behind.
+
+---
+
+## ADR-019 — Jurisdiction and seasonal hazards prompt; they do not assert
+
+**Context.** §7 asks for jurisdiction awareness and seasonal hazards keyed to
+the dates.
+
+**Decision.** The app cannot know which side of a boundary you are on, so it
+asks, and each jurisdiction gets prompts covering fires, dogs, stay limits,
+permits and — for Crown land and First Nations territory — protocol. Seasonal
+hazards are keyed to the month of the start date and each carries a `check`
+field naming what the app cannot verify.
+
+**Rationale.** The failure mode of a confident hazard list is worse than the
+failure mode of a prompt: it implies a check nobody made. Same principle as
+ADR-004. Spring and fall bears are separate hazards with different advice
+because they are different problems — green-up on valley bottoms versus
+hyperphagia at berry patches.

@@ -288,8 +288,6 @@ export interface Item {
   ownership: Ownership;
   /** Set when the last trigger this item depended on was deleted. */
   orphaned?: boolean;
-  /** Another household is bringing this one. */
-  coveredBy?: string;
   gear?: GearState;
   /**
    * Override the pack zone this item's category would otherwise imply.
@@ -381,6 +379,16 @@ export interface Trip {
    * two kids, division of labour is the actual constraint.
    */
   packedBy: Record<string, Id>;
+  /**
+   * Items another household is bringing, keyed by item id. Trip-scoped, not
+   * library-scoped: who brings the stove is a fact about one weekend, not a
+   * durable property of the stove.
+   */
+  coveredBy: Record<string, Id>;
+  households: Household[];
+  jurisdiction: Jurisdiction;
+  campRoles: CampRole[];
+  plan: TripPlan;
   /**
    * Deliberately left behind on this trip after a shakedown. These are shown
    * struck through rather than removed, because a decision is not the same as
@@ -567,3 +575,83 @@ export const BOAT_ZONE_NOTES: Record<BoatZone, string> = {
 };
 
 export type LoadZone = VehicleZone | PackZone | BoatZone;
+
+// ---------------------------------------------------------------------------
+// Judgement
+// ---------------------------------------------------------------------------
+
+/**
+ * Jurisdiction matters: BC Parks, rec sites, Crown land and First Nations
+ * territory have different rules on fires, dogs and stay limits, and the app
+ * cannot know which one you are on. It prompts.
+ */
+export const JURISDICTIONS = [
+  'unknown',
+  'bc-parks',
+  'rec-site',
+  'crown-land',
+  'first-nations',
+  'regional-park',
+  'private',
+] as const;
+export type Jurisdiction = (typeof JURISDICTIONS)[number];
+
+export const JURISDICTION_LABELS: Record<Jurisdiction, string> = {
+  unknown: 'Not sure yet',
+  'bc-parks': 'BC Parks',
+  'rec-site': 'Rec site (Sites and Trails BC)',
+  'crown-land': 'Crown land',
+  'first-nations': 'First Nations territory',
+  'regional-park': 'Regional or municipal park',
+  private: 'Private campground',
+};
+
+/**
+ * A trip plan is a first-class object, not a checkbox. Most of it is generated;
+ * these are the fields only a person can supply.
+ */
+export interface TripPlan {
+  routeNotes: string;
+  bailOutPoints: string;
+  nearestHospital: string;
+  contactName: string;
+  contactPhone: string;
+  /** "If you have not heard from us by this time, act." */
+  overdue: string;
+  sharedAtISO?: string;
+}
+
+export const CAMP_JOBS = [
+  'pitch-camp',
+  'cook',
+  'dishes',
+  'fire',
+  'water',
+  'bear-hang',
+  'strike-camp',
+] as const;
+export type CampJob = (typeof CAMP_JOBS)[number];
+
+export const CAMP_JOB_LABELS: Record<CampJob, string> = {
+  'pitch-camp': 'Pitch camp',
+  cook: 'Cook',
+  dishes: 'Dishes',
+  fire: 'Fire',
+  water: 'Water',
+  'bear-hang': 'Bear hang',
+  'strike-camp': 'Strike camp',
+};
+
+export interface CampRole {
+  id: Id;
+  job: CampJob;
+  /** Undefined means "the whole trip" rather than a particular day. */
+  dayIndex?: number;
+  personId?: Id;
+}
+
+/** Camping with another family. Splitting group gear is the whole point. */
+export interface Household {
+  id: Id;
+  name: string;
+}

@@ -3,14 +3,15 @@ import { useStore } from '../state/store';
 import { lintLibrary, lintSummary } from '../engine/lint';
 import { buildList } from '../engine/build';
 import { ruleToEnglish, namesFrom, qtyToEnglish } from '../engine/english';
-import { PHASE_LABELS, type Item } from '../data/types';
+import { upsertItem } from '../engine/mutations';
+import { GEAR_CONDITIONS, PHASE_LABELS, type GearCondition, type Item } from '../data/types';
 
 /**
  * The library is the valuable thing in the app, so this view leads with its
  * health — the lint pass — rather than with a search box.
  */
 export function LibraryView({ focusItemId }: { focusItemId: string | null }) {
-  const { library, trip } = useStore();
+  const { library, trip, setLibrary } = useStore();
   const [query, setQuery] = useState('');
   const [onlyProblems, setOnlyProblems] = useState(false);
 
@@ -91,6 +92,9 @@ export function LibraryView({ focusItemId }: { focusItemId: string | null }) {
             packing={packing.has(item.id)}
             problems={byItem.get(item.id)?.map((f) => f.message) ?? []}
             focused={focusItemId === item.id}
+            onGearChange={(gear) =>
+              setLibrary(upsertItem(library, { ...item, gear }), `update ${item.name}`)
+            }
           />
         ))}
       </ul>
@@ -105,12 +109,14 @@ function ItemCard({
   packing,
   problems,
   focused,
+  onGearChange,
 }: {
   item: Item;
   english: string;
   packing: boolean;
   problems: string[];
   focused: boolean;
+  onGearChange: (gear: Item['gear']) => void;
 }) {
   return (
     <li
@@ -136,6 +142,69 @@ function ItemCard({
           {problem}
         </p>
       ))}
+
+      {item.type === 'gear' && (
+        <details className="item-card__gear">
+          <summary>
+            Condition
+            {item.gear?.condition && item.gear.condition !== 'ok' && (
+              <span className="tag tag--bad">{item.gear.condition}</span>
+            )}
+          </summary>
+          <div className="fields">
+            <label className="field">
+              <span className="field__label">State</span>
+              <select
+                className="input"
+                value={item.gear?.condition ?? 'unknown'}
+                onChange={(e) =>
+                  onGearChange({ ...item.gear, condition: e.target.value as GearCondition })
+                }
+              >
+                {GEAR_CONDITIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              <span className="field__label">Fuel / charge</span>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="10"
+                className="input"
+                value={Math.round((item.gear?.level ?? 1) * 100)}
+                onChange={(e) => onGearChange({ ...item.gear, level: Number(e.target.value) / 100 })}
+              />
+              <span className="field__hint">
+                {Math.round((item.gear?.level ?? 1) * 100)}% — annotates the row and feeds the
+                shopping list. It never removes anything from the packing list.
+              </span>
+            </label>
+            <label className="field">
+              <span className="field__label">Borrowed from</span>
+              <input
+                type="text"
+                className="input"
+                value={item.gear?.borrowedFrom ?? ''}
+                onChange={(e) => onGearChange({ ...item.gear, borrowedFrom: e.target.value })}
+              />
+            </label>
+            <label className="field">
+              <span className="field__label">Loaned to</span>
+              <input
+                type="text"
+                className="input"
+                value={item.gear?.loanedTo ?? ''}
+                onChange={(e) => onGearChange({ ...item.gear, loanedTo: e.target.value })}
+              />
+            </label>
+          </div>
+        </details>
+      )}
     </li>
   );
 }

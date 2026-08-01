@@ -6,6 +6,7 @@ import { ShopView } from './views/ShopView';
 import { PrepView } from './views/PrepView';
 import { LoadPlanView } from './views/LoadPlanView';
 import { KidListView } from './views/KidListView';
+import { GoView } from './views/GoView';
 import { LibraryView } from './views/LibraryView';
 import { DataView } from './views/DataView';
 
@@ -25,7 +26,7 @@ const WORKFLOW: { id: Destination; label: string; phase: number }[] = [
   { id: 'shop', label: 'Food', phase: 1 },
   { id: 'prep', label: 'Prep', phase: 1 },
   { id: 'load', label: 'Load', phase: 1 },
-  { id: 'go', label: 'Go', phase: 5 },
+  { id: 'go', label: 'Go', phase: 1 },
   { id: 'review', label: 'Review', phase: 6 },
 ];
 
@@ -149,6 +150,7 @@ export function App() {
             {loadMode === 'kid' && <KidListView />}
           </>
         )}
+        {at === 'go' && <GoView />}
         {at === 'library' && <LibraryView focusItemId={focusItemId} />}
         {at === 'data' && <DataView />}
         {pending && (

@@ -94,8 +94,10 @@ The library lint pass runs in tests and in the UI.
   zones for vehicle, pack and kayak; per-zone weights and loading notes;
   responsibility assignment as a fifth grouping axis; the shakedown pass with
   the 20%-of-body-weight flag and leave-behind; the kid-facing list.
-- **Phase 5 — judgement.** Trip plan document, gear condition, jurisdiction and
-  seasonal prompts, group and multi-household logistics.
+- **Phase 5 — judgement.** *Done.* Generated trip plan document with a
+  completeness check, jurisdiction prompts, seasonal hazards keyed to the dates,
+  camp job assignment with clash detection, multi-household gear splitting,
+  editable gear condition, per-person medical details.
 - **Phase 6 — the loop.** Post-trip review feeding proposed rule edits.
 
 ## Accessibility and physical context

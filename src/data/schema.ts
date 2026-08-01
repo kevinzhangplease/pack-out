@@ -12,7 +12,7 @@ import type { Library, Trip } from './types';
  * data written by an older version of the app, which by definition does not
  * match today's types.
  */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export interface Migration {
   to: number;
@@ -81,6 +81,39 @@ export const MIGRATIONS: Migration[] = [
           if (!trip.packedBy || typeof trip.packedBy !== 'object') trip.packedBy = {};
           if (!Array.isArray(trip.leftBehind)) trip.leftBehind = [];
         }
+      }
+      return data;
+    },
+  },
+  {
+    to: 4,
+    describe: 'added the trip plan, jurisdiction, camp roles and household coverage',
+    migrate(data) {
+      const trips = data.trips;
+      if (Array.isArray(trips)) {
+        for (const trip of trips as Record<string, unknown>[]) {
+          if (!trip.coveredBy || typeof trip.coveredBy !== 'object') trip.coveredBy = {};
+          if (!Array.isArray(trip.households)) trip.households = [];
+          if (!Array.isArray(trip.campRoles)) trip.campRoles = [];
+          if (typeof trip.jurisdiction !== 'string') trip.jurisdiction = 'unknown';
+          if (!trip.plan || typeof trip.plan !== 'object') {
+            trip.plan = {
+              routeNotes: '',
+              bailOutPoints: '',
+              nearestHospital: '',
+              contactName: '',
+              contactPhone: '',
+              overdue: '',
+            };
+          }
+        }
+      }
+      // coveredBy moved from the library to the trip, because who brings the
+      // stove is a fact about one weekend rather than a property of the stove.
+      const library = data.library as Record<string, unknown> | undefined;
+      const items = (library?.items ?? data.items) as Record<string, unknown>[] | undefined;
+      if (Array.isArray(items)) {
+        for (const item of items) delete item.coveredBy;
       }
       return data;
     },
