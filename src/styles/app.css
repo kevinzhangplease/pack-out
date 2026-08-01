@@ -1170,3 +1170,239 @@
   font-size: 0.7rem;
   color: var(--fg-muted);
 }
+
+/* --- meal plan --------------------------------------------------------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.panel__meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--fg-muted);
+}
+
+.days {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+/* A day reads as a page in a log book: ruled header, entries beneath. */
+.day {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-sunk);
+}
+
+.day__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 2px solid var(--line-strong);
+}
+
+.day__label {
+  flex: 1;
+  font-size: var(--step-0);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.day__tag {
+  margin-left: var(--sp-2);
+  padding: 1px var(--sp-2);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.slot {
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.slot__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+  margin-bottom: var(--sp-1);
+}
+
+.slot__meals {
+  display: grid;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
+.slot__meal {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  padding: var(--sp-1) 0;
+}
+
+.slot__name {
+  flex: 1;
+  min-width: 10rem;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  font-size: var(--step--1);
+}
+
+/* --- shopping list ----------------------------------------------------- */
+
+.shop-section {
+  margin-bottom: var(--sp-4);
+}
+
+.shop-section__label {
+  font-family: var(--font-display);
+  font-stretch: condensed;
+  font-size: var(--step-0);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-bottom: var(--sp-1);
+  border-bottom: 2px solid var(--line-strong);
+  margin-bottom: var(--sp-2);
+}
+
+.shop-section__items {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  min-height: 44px;
+  padding: var(--sp-1) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.shop-item__name {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.shop-item__amount {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--fg-muted);
+}
+
+/* In stock: shown, struck through, not bought. Never hidden — a staple you
+   have silently forgotten about is the failure this is guarding against. */
+.shop-item.is-stocked .shop-item__name,
+.shop-item.is-stocked .shop-item__amount {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* --- food warnings ----------------------------------------------------- */
+
+.gate--error {
+  border-left-color: var(--danger);
+}
+
+.gate--warn {
+  border-left-color: var(--warn);
+}
+
+.gate--note {
+  border-left-color: var(--line-strong);
+}
+
+.gate__fix {
+  margin-top: var(--sp-1);
+  font-size: var(--step--1);
+  color: var(--fg);
+}
+
+/* --- prep and cooler --------------------------------------------------- */
+
+.group__head--static {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--touch);
+  padding: 0 var(--sp-3);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-sunk);
+}
+
+.row__note--full {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--sp-2);
+  padding-left: calc(26px + var(--sp-3));
+  font-size: var(--step--1);
+  color: var(--fg-muted);
+}
+
+/*
+ * The cooler, drawn as a stack: layer one is the bottom of the box. Reading
+ * downward on screen means loading upward in the cooler, which is the order you
+ * physically do it in.
+ */
+.cooler {
+  display: grid;
+  gap: 2px;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.cooler__layer {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 44px;
+  padding: 0 var(--sp-3);
+  background: var(--bg-sunk);
+  font-size: var(--step--1);
+}
+
+.cooler__layer--frozen {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.cooler__n {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.cooler__name {
+  flex: 1;
+}
+
+.cooler__meta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  opacity: 0.85;
+}

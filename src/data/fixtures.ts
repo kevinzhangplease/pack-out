@@ -1,4 +1,21 @@
-import type { Trip } from './types';
+import type { MealPlanEntry, Trip } from './types';
+
+/**
+ * A real three-night plan: trivial arrival dinner (frozen chili, one pot, which
+ * is also the ice), one fire meal, one project meal, and a leftovers lunch
+ * linked to the dinner that produced it.
+ */
+const FAMILY_MEAL_PLAN: MealPlanEntry[] = [
+  { id: 'mp-1', dayIndex: 0, slot: 'dinner', mealId: 'meal-chili' },
+  { id: 'mp-2', dayIndex: 1, slot: 'breakfast', mealId: 'meal-eggs-bacon' },
+  { id: 'mp-3', dayIndex: 1, slot: 'lunch', mealId: 'meal-leftovers', leftoversFrom: 'mp-1' },
+  { id: 'mp-4', dayIndex: 1, slot: 'dinner', mealId: 'meal-foil-salmon' },
+  { id: 'mp-5', dayIndex: 1, slot: 'snack', mealId: 'meal-smores' },
+  { id: 'mp-6', dayIndex: 2, slot: 'breakfast', mealId: 'meal-pancakes' },
+  { id: 'mp-7', dayIndex: 2, slot: 'lunch', mealId: 'meal-sandwiches' },
+  { id: 'mp-8', dayIndex: 2, slot: 'dinner', mealId: 'meal-tacos' },
+  { id: 'mp-9', dayIndex: 3, slot: 'breakfast', mealId: 'meal-bagels' },
+];
 
 /**
  * Golden fixture trips. These are the trips the engine is tested against, and
@@ -31,6 +48,7 @@ export const FAMILY_CAR_SUMMER: Trip = {
   vehicleIds: ['v-minivan'],
   rackIds: ['roof-rack'],
   shelters: [{ id: 'sh-1', name: 'Big tent', occupantIds: ['p-adult-1', 'p-adult-2', 'p-kid-1', 'p-kid-2'] }],
+  mealPlan: FAMILY_MEAL_PLAN,
 };
 
 export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
@@ -48,6 +66,12 @@ export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
   vehicleIds: ['v-minivan'],
   rackIds: [],
   shelters: [{ id: 'sh-1', name: 'Solo tent', occupantIds: ['p-adult-1'] }],
+  mealPlan: [
+    { id: 'mp-1', dayIndex: 0, slot: 'dinner', mealId: 'meal-dehydrated' },
+    { id: 'mp-2', dayIndex: 1, slot: 'breakfast', mealId: 'meal-oats' },
+    { id: 'mp-3', dayIndex: 1, slot: 'dinner', mealId: 'meal-dehydrated' },
+    { id: 'mp-4', dayIndex: 2, slot: 'breakfast', mealId: 'meal-oats' },
+  ],
 };
 
 export const WINTER_HIKE_IN: Trip = {
@@ -65,6 +89,10 @@ export const WINTER_HIKE_IN: Trip = {
   vehicleIds: ['v-minivan'],
   rackIds: [],
   shelters: [{ id: 'sh-1', name: 'Winter tent', occupantIds: ['p-adult-1', 'p-adult-2'] }],
+  mealPlan: [
+    { id: 'mp-1', dayIndex: 0, slot: 'dinner', mealId: 'meal-dehydrated' },
+    { id: 'mp-2', dayIndex: 1, slot: 'breakfast', mealId: 'meal-oats' },
+  ],
 };
 
 export const KAYAK_TRIP: Trip = {
@@ -82,6 +110,11 @@ export const KAYAK_TRIP: Trip = {
   vehicleIds: ['v-minivan'],
   rackIds: ['kayak-rack', 'roof-rack'],
   shelters: [{ id: 'sh-1', name: 'Tent', occupantIds: ['p-adult-1', 'p-adult-2'] }],
+  mealPlan: [
+    { id: 'mp-1', dayIndex: 0, slot: 'dinner', mealId: 'meal-dehydrated' },
+    { id: 'mp-2', dayIndex: 1, slot: 'breakfast', mealId: 'meal-oats' },
+    { id: 'mp-3', dayIndex: 1, slot: 'dinner', mealId: 'meal-pasta' },
+  ],
 };
 
 /** Degenerate: nobody selected. */
@@ -91,6 +124,7 @@ export const NOBODY: Trip = {
   name: 'Nobody going',
   attendeeIds: [],
   shelters: [],
+  mealPlan: [],
 };
 
 /** Degenerate: zero nights. */

@@ -336,6 +336,12 @@ export interface Library {
   activities: Activity[];
   people: Person[];
   vehicles: Vehicle[];
+  meals: Meal[];
+  /**
+   * Pantry staples: name -> is it in stock. Track stock, not presence, so salt
+   * and oil stop appearing on the shopping list every single trip.
+   */
+  pantry: Record<string, boolean>;
 }
 
 export interface Weather {
@@ -361,6 +367,7 @@ export interface Trip {
   vehicleIds: Id[];
   rackIds: string[];
   shelters: Shelter[];
+  mealPlan: MealPlanEntry[];
 }
 
 export interface Shelter {
@@ -374,4 +381,90 @@ export interface Session {
   tripId: Id;
   checked: Record<string, boolean>;
   collapsed: Record<string, boolean>;
+}
+
+// ---------------------------------------------------------------------------
+// Food
+//
+// Meals are planned per meal, per day, against the real dates — "Day 2
+// breakfast", never "two breakfasts". Each meal contributes three distinct
+// things to the list: cooking instruments, ingredients, eating instruments.
+// ---------------------------------------------------------------------------
+
+export const MEAL_SLOTS = ['breakfast', 'lunch', 'dinner', 'snack'] as const;
+export type MealSlot = (typeof MEAL_SLOTS)[number];
+
+/** The shopping list is grouped by these. It is a different document from the
+ *  packing list, used at a different time, in a different building. */
+export const STORE_SECTIONS = [
+  'produce',
+  'meat',
+  'dairy',
+  'bakery',
+  'dry-goods',
+  'canned',
+  'frozen',
+  'drinks',
+  'household',
+] as const;
+export type StoreSection = (typeof STORE_SECTIONS)[number];
+
+/** Coolers lose the fight around day three. This is what makes that checkable. */
+export const COLD_CHAINS = ['ambient', 'refrigerated', 'frozen'] as const;
+export type ColdChain = (typeof COLD_CHAINS)[number];
+
+export const INGREDIENT_UNITS = ['g', 'kg', 'ml', 'l', 'ea', 'tbsp', 'tsp', 'cup', 'pack'] as const;
+export type IngredientUnit = (typeof INGREDIENT_UNITS)[number];
+
+export interface Ingredient {
+  id: Id;
+  name: string;
+  /** Per eater-unit when scaling is 'per-eater', otherwise the whole amount. */
+  amount: number;
+  unit: IngredientUnit;
+  scaling: 'per-eater' | 'flat';
+  section: StoreSection;
+  cold: ColdChain;
+  /** Lives in the pantry box. Tracked by stock, not bought every trip. */
+  pantryStaple?: boolean;
+  allergens?: string[];
+}
+
+export interface PrepTask {
+  id: Id;
+  name: string;
+  phase: Phase;
+  note?: string;
+}
+
+export interface Meal {
+  id: Id;
+  name: string;
+  slots: MealSlot[];
+  ingredients: Ingredient[];
+  /** Library item ids: the cooking instruments this meal needs. */
+  cookware: Id[];
+  /** Library item ids: the eating instruments. */
+  serveware: Id[];
+  /** Complexity budget. Arrival night must be trivial. */
+  pots: number;
+  needsFire: boolean;
+  noCook: boolean;
+  /** A meal worth doing once a trip and never twice. */
+  project: boolean;
+  prep: PrepTask[];
+  producesLeftovers?: boolean;
+  /** Litres per eater-unit for cooking AND cleanup, not just drinking. */
+  waterL: number;
+  note?: string;
+}
+
+export interface MealPlanEntry {
+  id: Id;
+  /** 0 is the arrival day. Resolved against the real dates. */
+  dayIndex: number;
+  slot: MealSlot;
+  mealId: Id;
+  /** A leftovers lunch that is not tied to the dinner that produced it is a guess. */
+  leftoversFrom?: Id;
 }

@@ -21,6 +21,26 @@ export interface ListLine {
   weight_g: number;
 }
 
+/**
+ * What the meal plan contributes to the PACKING list. Typed here rather than
+ * imported from engine/meals so the core builder keeps no dependency on food.
+ *
+ * Three distinct categories, as the brief requires: cooking instruments and
+ * eating instruments arrive as `requiredItems` (they are library items, and a
+ * meal can pull one in that no rule would have), and the ingredients arrive as
+ * `ingredients`, because they are not library items at all.
+ */
+export interface MealContribution {
+  requiredItems: { itemId: Id; reasons: string[]; role: string }[];
+  ingredients: {
+    key: string;
+    name: string;
+    amount: string;
+    cold: 'ambient' | 'refrigerated' | 'frozen';
+    meals: string[];
+  }[];
+}
+
 export interface BuildResult {
   lines: ListLine[];
   /** Items excluded, with the trace showing which condition failed. */
@@ -32,13 +52,21 @@ export interface BuildResult {
   weightByPerson: Record<Id, number>;
 }
 
-export function buildList(trip: Trip, library: Library): BuildResult {
+export function buildList(
+  trip: Trip,
+  library: Library,
+  meals?: MealContribution,
+): BuildResult {
   const facts = deriveFacts(trip, library);
   const names = namesFrom(library);
 
   const lines: ListLine[] = [];
   const excluded: BuildResult['excluded'] = [];
   const orphaned: Item[] = [];
+
+  const requiredByMeals = new Map(
+    (meals?.requiredItems ?? []).map((r) => [r.itemId, r]),
+  );
 
   for (const item of library.items) {
     // An orphan is quarantined, not evaluated. Its rule is known to be broken,
@@ -80,6 +108,20 @@ export function buildList(trip: Trip, library: Library): BuildResult {
 
     const why = evalRule(item.rule, facts, { names });
     if (!why.passed) {
+      // A meal can pull in an instrument no rule would have packed. It still
+      // has to say why, so it carries a trace naming the meals that need it.
+      const required = requiredByMeals.get(item.id);
+      if (required) {
+        lines.push({
+          key: item.id,
+          item,
+          qty: 1,
+          why: mealTrace(required.role, required.reasons),
+          howMany: { value: 1, english: 'one, because the meal plan needs it', unitCount: 0 },
+          weight_g: item.weight_g,
+        });
+        continue;
+      }
       excluded.push({ item, why });
       continue;
     }
@@ -98,6 +140,35 @@ export function buildList(trip: Trip, library: Library): BuildResult {
     });
   }
 
+  // The ingredients themselves. Not library items, so they are built here and
+  // filed by cold chain: frozen and chilled to the cooler, everything else to
+  // the pantry box.
+  for (const ingredient of meals?.ingredients ?? []) {
+    const item: Item = {
+      id: `ingredient:${ingredient.key}`,
+      name: `${ingredient.name} — ${ingredient.amount}`,
+      category: 'food',
+      container: ingredient.cold === 'ambient' ? 'pantry-box' : 'cooler',
+      rule: { mode: 'all', conds: [{ kind: 'always' }] },
+      qty: { base: 1, rate: 0, unit: 'flat' },
+      weight_g: 0,
+      phase: ingredient.cold === 'ambient' ? 'night-before' : 'morning-of',
+      kind: 'consumable',
+      type: 'gear',
+      ownership: 'group',
+      scented: true,
+      note: `For ${ingredient.meals.join(', ')}.`,
+    };
+    lines.push({
+      key: item.id,
+      item,
+      qty: 1,
+      why: mealTrace('ingredient', ingredient.meals),
+      howMany: { value: 1, english: ingredient.amount, unitCount: 0 },
+      weight_g: 0,
+    });
+  }
+
   const weightByPerson: Record<Id, number> = {};
   for (const line of lines) {
     if (line.person) {
@@ -112,6 +183,26 @@ export function buildList(trip: Trip, library: Library): BuildResult {
     facts,
     totalWeight_g: lines.reduce((sum, l) => sum + l.weight_g, 0),
     weightByPerson,
+  };
+}
+
+/**
+ * A trace for something the meal plan required rather than a rule. It has the
+ * same shape as a rule trace, so every consumer — the "why" disclosure, the
+ * text export, the diff — keeps working without special cases.
+ */
+function mealTrace(role: string, reasons: string[]): RuleTrace {
+  const article = /^[aeiou]/i.test(role) ? 'an' : 'a';
+  const english = `On the list as ${article} ${role} for the meal plan`;
+  return {
+    passed: true,
+    english,
+    conds: reasons.map((reason) => ({
+      cond: { kind: 'always' },
+      passed: true,
+      english: reason,
+      actual: '',
+    })),
   };
 }
 

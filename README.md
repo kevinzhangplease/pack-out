@@ -44,8 +44,8 @@ the tests are the reason the library can be edited without fear.
 
 | Scope | Contains | Lifetime |
 |---|---|---|
-| Library | items, rules, containers, activities, people | durable; the valuable thing |
-| Trip | dates, conditions, who, site answers, sleeping arrangement | one per trip, many saved |
+| Library | items, rules, containers, activities, people, meals, pantry stock | durable; the valuable thing |
+| Trip | dates, conditions, who, site answers, sleeping arrangement, meal plan | one per trip, many saved |
 | Session | checkboxes, collapsed groups | per trip, resettable |
 
 Session state is keyed by trip id, so checks cannot bleed between trips.
@@ -82,11 +82,14 @@ The library lint pass runs in tests and in the UI.
   evaluation, the default library, list generation, grouping by container /
   category / person / phase, safety gates, the lint pass, export and import,
   offline shell.
-- **Phase 2 — the trip.** Dates, location, weather with fetch-as-proposal,
-  people, activities, the site questionnaire, sleeping arrangement, info panels
-  on every section, saved trips.
-- **Phase 3 — food.** Per-day meal plan, cooking/ingredients/eating outputs,
-  shopping list by store section, prep tasks, cold chain, weather contingency.
+- **Phase 2 — the trip.** *Done.* Dates, location, weather with
+  fetch-as-proposal, people, activities, the site questionnaire, sleeping
+  arrangement, info panels on every section, saved trips.
+- **Phase 3 — food.** *Done.* Per-day meal plan against real dates with
+  copy-a-day and leftover linking, the three output categories on the packing
+  list, shopping list by store section with pantry stock, generated prep tasks
+  on the timeline, cooler loading order, cold chain, complexity budget and
+  weather contingency.
 - **Phase 4 — packing reality.** The load plan, load-order views, responsibility
   assignment, the kid-facing list, the shakedown pass.
 - **Phase 5 — judgement.** Trip plan document, gear condition, jurisdiction and

@@ -8,6 +8,7 @@ import { CLOTHING_HYGIENE_ITEMS } from './items-clothing-hygiene';
 import { SAFETY_NAV_ITEMS } from './items-safety-nav';
 import { KIDS_BOAT_ITEMS } from './items-kids-boat';
 import { ACTION_ITEMS } from './items-actions';
+import { DEFAULT_MEALS, DEFAULT_PANTRY } from './meals';
 
 export const DEFAULT_ITEMS = [
   ...SHELTER_SLEEP_ITEMS,
@@ -27,7 +28,9 @@ export function defaultLibrary(): Library {
     activities: ACTIVITIES,
     people: SEED_PEOPLE,
     vehicles: SEED_VEHICLES,
+    meals: DEFAULT_MEALS,
+    pantry: DEFAULT_PANTRY,
   });
 }
 
-export { CONTAINERS, ACTIVITIES, SEED_PEOPLE, SEED_VEHICLES };
+export { CONTAINERS, ACTIVITIES, SEED_PEOPLE, SEED_VEHICLES, DEFAULT_MEALS };

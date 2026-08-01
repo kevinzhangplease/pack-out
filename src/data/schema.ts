@@ -12,7 +12,7 @@ import type { Library, Trip } from './types';
  * data written by an older version of the app, which by definition does not
  * match today's types.
  */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export interface Migration {
   to: number;
@@ -21,9 +21,32 @@ export interface Migration {
 }
 
 export const MIGRATIONS: Migration[] = [
-  // v1 is the initial schema. The first real migration will land here as
-  // { to: 2, ... }. The chain is exercised by a test even while it is empty,
-  // so the machinery cannot rot before it is needed.
+  {
+    to: 2,
+    describe: 'added the meal plan, the meal library and pantry stock',
+    migrate(data) {
+      const library = data.library as Record<string, unknown> | undefined;
+      if (library) {
+        // A v1 library had no meals. It gets an empty one rather than the
+        // shipped defaults: silently injecting twenty meals into somebody's
+        // curated library would be a worse surprise than an empty meal screen.
+        if (!Array.isArray(library.meals)) library.meals = [];
+        if (!library.pantry || typeof library.pantry !== 'object') library.pantry = {};
+      }
+      const trips = data.trips;
+      if (Array.isArray(trips)) {
+        for (const trip of trips as Record<string, unknown>[]) {
+          if (!Array.isArray(trip.mealPlan)) trip.mealPlan = [];
+        }
+      }
+      // A bare library export, rather than a full backup.
+      if (!library && Array.isArray(data.items)) {
+        if (!Array.isArray(data.meals)) data.meals = [];
+        if (!data.pantry || typeof data.pantry !== 'object') data.pantry = {};
+      }
+      return data;
+    },
+  },
 ];
 
 export interface MigrationResult<T> {

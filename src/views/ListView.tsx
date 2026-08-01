@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '../state/store';
-import { buildList, groupLines, type GroupBy, type ListLine } from '../engine/build';
+import { useFood } from '../state/useFood';
+import { groupLines, type GroupBy, type ListLine } from '../engine/build';
 import { evaluateGates, listIsQualified } from '../engine/gates';
 import { listToText } from '../engine/textExport';
 import { RuleTraceView } from '../components/RuleTrace';
@@ -30,7 +31,10 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
   const [openTrace, setOpenTrace] = useState<string | null>(null);
   const [showResident, setShowResident] = useState(false);
 
-  const result = useMemo(() => (trip ? buildList(trip, library) : null), [trip, library]);
+  // The list includes what the meal plan requires: cooking instruments, eating
+  // instruments and the ingredients themselves.
+  const food = useFood();
+  const result = food?.list ?? null;
   const gates = useMemo(
     () => (trip && result ? evaluateGates(trip, result.facts, result) : []),
     [trip, result],

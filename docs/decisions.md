@@ -150,3 +150,62 @@ the interface for splitting group gear with another family arrives in phase 5.
 
 **Rationale.** The fields cost almost nothing now. Retrofitting them later would
 touch every view that renders a line.
+
+---
+
+## ADR-010 — Meals contribute to the packing list without becoming rules
+
+**Context.** Every meal contributes three things to the list: cooking
+instruments, eating instruments, and ingredients. The first two are library
+items; the third is not, and a meal can require an item that no rule would have
+packed (foil on a hike-in trip, say).
+
+**Decision.** `buildList` takes an optional `MealContribution`. A required item
+whose rule fails is still packed, and ingredients are synthesised into list
+lines. Both carry a `RuleTrace` of the same shape as a rule-driven line, whose
+conditions are the meals that need them.
+
+**Rationale.** The alternative was a condition field like `usedByMealPlan`,
+which would have made the rule language know about food — a much larger
+commitment for no gain. Keeping the trace shape identical means the "why"
+disclosure, the diff, the text export and the grouping all work on meal lines
+with no special cases, so a row that arrived via the meal plan can still answer
+"why is this here" in exactly the same way.
+
+**Consequence.** `MealContribution` is declared in `engine/build.ts` rather than
+imported from `engine/meals.ts`, so the core builder keeps no dependency on
+food.
+
+---
+
+## ADR-011 — Pantry stock strikes items through; it never hides them
+
+**Context.** Salt and oil should not appear on the shopping list every trip
+(§6), which argues for hiding staples believed to be in stock.
+
+**Decision.** In-stock staples stay on the shopping list, struck through, with a
+"Ran out" button. They are excluded from the count of things to buy and from the
+text export's main body, where they appear under a separate heading.
+
+**Rationale.** Stock is a belief, and beliefs go stale. Hiding an item because
+of a stale belief is how you arrive with no salt. Striking it through gives you
+the benefit — it is visibly not something to buy — while keeping it visible
+enough to correct in one tap. This is ADR-003 applied to food.
+
+---
+
+## ADR-012 — The meal plan and the shopping list share a screen
+
+**Context.** Open question implied by §9.1: where does food live in a
+workflow-shaped navigation?
+
+**Decision.** One "Food" step holds the meal plan and the shopping list. The
+prep-at-home tasks it generates live on "Prep", alongside the rule-driven
+timeline actions.
+
+**Rationale.** Planning meals and generating the shopping list are one sitting:
+the list falls out of the plan and you check it against the plan. Prep is a
+different moment — a different day, in fact — so it belongs with the other
+things that happen at T-3 days and the night before. The workflow step formerly
+labelled "Shop" is labelled "Food" for this reason; the shopping list is its
+output, not its whole subject.
