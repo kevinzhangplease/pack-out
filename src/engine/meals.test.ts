@@ -526,7 +526,8 @@ describe('schema migration v1 to v2', () => {
     };
     const result = migrate<{ schemaVersion: number; library: Library; trips: Trip[] }>(old);
     expect(result.fromVersion).toBe(1);
-    expect(result.applied).toHaveLength(1);
+    // Every migration from v1 onward runs, in order.
+    expect(result.applied[0]).toContain('meal plan');
     expect(result.data.trips[0]!.mealPlan).toEqual([]);
   });
 

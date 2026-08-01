@@ -291,13 +291,18 @@ export interface Item {
   /** Another household is bringing this one. */
   coveredBy?: string;
   gear?: GearState;
+  /**
+   * Override the pack zone this item's category would otherwise imply.
+   * Only meaningful when the transport is carried.
+   */
+  packZone?: PackZone;
 }
 
 export interface Container {
   id: Id;
   name: string;
-  /** Where it rides. Drives the load-order view in phase 4. */
-  loadZone?: string;
+  /** Where it rides, per transport. The load plan reads this. */
+  zones?: Partial<Record<Transport, LoadZone>>;
   note?: string;
 }
 
@@ -312,6 +317,8 @@ export interface Person {
   id: Id;
   name: string;
   role: Role;
+  /** Needed for the shakedown pass. Nothing else reads it. */
+  bodyWeight_kg?: number;
   /** Multiplier on their eater-unit. 1 means "as expected for the role". */
   appetite?: number;
   dietary?: string[];
@@ -368,6 +375,18 @@ export interface Trip {
   rackIds: string[];
   shelters: Shelter[];
   mealPlan: MealPlanEntry[];
+  /**
+   * Who is responsible for PACKING a thing, which is not the same as whose it
+   * is. Keyed by container id, with item ids as overrides. With two adults and
+   * two kids, division of labour is the actual constraint.
+   */
+  packedBy: Record<string, Id>;
+  /**
+   * Deliberately left behind on this trip after a shakedown. These are shown
+   * struck through rather than removed, because a decision is not the same as
+   * an absence and you should be able to see what you chose to drop.
+   */
+  leftBehind: Id[];
 }
 
 export interface Shelter {
@@ -468,3 +487,83 @@ export interface MealPlanEntry {
   /** A leftovers lunch that is not tied to the dinner that produced it is a guess. */
   leftoversFrom?: Id;
 }
+
+// ---------------------------------------------------------------------------
+// Load order
+//
+// Where a thing physically goes. Three vocabularies, because the constraint is
+// different in each: a vehicle is volume and access order, a pack is weight
+// against your back, a kayak is trim and reach.
+// ---------------------------------------------------------------------------
+
+/** Nose at the top. These are footprint zones, so they can be drawn top-down. */
+export const VEHICLE_ZONES = [
+  'roof',
+  'cabin-front',
+  'cabin-rear',
+  'boot-front',
+  'boot-rear',
+  'under-floor',
+  'hitch',
+] as const;
+export type VehicleZone = (typeof VEHICLE_ZONES)[number];
+
+export const VEHICLE_ZONE_LABELS: Record<VehicleZone, string> = {
+  roof: 'Roof',
+  'cabin-front': 'Cabin, front',
+  'cabin-rear': 'Cabin, second row',
+  'boot-front': 'Boot, forward',
+  'boot-rear': 'Boot, at the tailgate',
+  'under-floor': 'Under the floor',
+  hitch: 'Hitch rack',
+};
+
+export const VEHICLE_ZONE_NOTES: Record<VehicleZone, string> = {
+  roof: 'Light and bulky only. Everything up here is windage and centre of gravity.',
+  'cabin-front': 'Reachable while driving. Nothing loose that could become a projectile.',
+  'cabin-rear': 'Kids can reach this. Put the things they will ask for here.',
+  'boot-front': 'Heavy, low and forward. This is where the weight belongs.',
+  'boot-rear': 'Last in, first out. Whatever you need before the tailgate is fully unpacked.',
+  'under-floor': 'Lives here between trips. Verify, do not repack.',
+  hitch: 'Check the strap at every stop.',
+};
+
+export const PACK_ZONES = ['bottom', 'core', 'lid', 'hipbelt', 'outside'] as const;
+export type PackZone = (typeof PACK_ZONES)[number];
+
+export const PACK_ZONE_LABELS: Record<PackZone, string> = {
+  bottom: 'Bottom',
+  core: 'Core, against your back',
+  lid: 'Lid',
+  hipbelt: 'Hipbelt pockets',
+  outside: 'Strapped outside',
+};
+
+export const PACK_ZONE_NOTES: Record<PackZone, string> = {
+  bottom: 'Soft and not needed until camp.',
+  core: 'The heavy things, high and against your spine. This is what makes a pack carry.',
+  lid: 'Wanted during the day without taking the pack off your back... almost.',
+  hipbelt: 'Reachable while walking.',
+  outside: 'Wet, sharp, or wanted instantly. Everything here can snag.',
+};
+
+export const BOAT_ZONES = ['bow', 'cockpit', 'day-hatch', 'stern', 'deck'] as const;
+export type BoatZone = (typeof BOAT_ZONES)[number];
+
+export const BOAT_ZONE_LABELS: Record<BoatZone, string> = {
+  bow: 'Bow',
+  cockpit: 'Cockpit',
+  'day-hatch': 'Day hatch',
+  stern: 'Stern',
+  deck: 'On deck',
+};
+
+export const BOAT_ZONE_NOTES: Record<BoatZone, string> = {
+  bow: 'Light and bulky. Too much weight here and she will not turn.',
+  cockpit: 'Between your legs and behind the seat. Nothing that can trap you.',
+  'day-hatch': 'The only thing you can reach on the water.',
+  stern: 'Heavy. Trim the boat slightly stern-down.',
+  deck: 'Only what must be instant. Everything on deck is windage and something to catch a wave.',
+};
+
+export type LoadZone = VehicleZone | PackZone | BoatZone;

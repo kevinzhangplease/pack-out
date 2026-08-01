@@ -2,15 +2,23 @@ import { useMemo, useState } from 'react';
 import { useStore } from '../state/store';
 import { useFood } from '../state/useFood';
 import { groupLines, type GroupBy, type ListLine } from '../engine/build';
+import { applyLeftBehind, byResponsibility } from '../engine/load';
 import { evaluateGates, listIsQualified } from '../engine/gates';
 import { listToText } from '../engine/textExport';
 import { RuleTraceView } from '../components/RuleTrace';
 import { PHASE_LABELS, type Phase } from '../data/types';
 
-const GROUPS: { id: GroupBy; label: string; hint: string }[] = [
+type Axis = GroupBy | 'responsibility';
+
+const GROUPS: { id: Axis; label: string; hint: string }[] = [
   { id: 'container', label: 'Container', hint: 'Which bin, duffel or bag it lives in' },
   { id: 'category', label: 'Category', hint: 'Shelter, sleep, kitchen and so on' },
   { id: 'person', label: 'Person', hint: 'Per-person items under each person, shared gear apart' },
+  {
+    id: 'responsibility',
+    label: 'Who packs',
+    hint: 'Who is responsible for packing it — not the same as whose it is',
+  },
   { id: 'phase', label: 'Timeline', hint: 'When it happens, not where it goes' },
 ];
 
@@ -27,7 +35,7 @@ const PHASE_ORDER: Phase[] = [
 
 export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void }) {
   const { trip, library, session, toggleCheck, toggleCollapsed, resetChecks } = useStore();
-  const [by, setBy] = useState<GroupBy>('container');
+  const [by, setBy] = useState<Axis>('container');
   const [openTrace, setOpenTrace] = useState<string | null>(null);
   const [showResident, setShowResident] = useState(false);
 
@@ -46,20 +54,29 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
 
   const qualified = listIsQualified(gates);
 
-  const visible = result.lines.filter(
-    (l) => showResident || l.item.kind !== 'vehicle-resident',
-  );
-  const groups = groupLines(visible, by, library).sort((a, b) =>
+  // Anything deliberately left behind after a shakedown is off the list, but
+  // still visible on the Load plan screen rather than silently gone.
+  const { going, dropped } = applyLeftBehind(result.lines, trip.leftBehind);
+
+  const visible = going.filter((l) => showResident || l.item.kind !== 'vehicle-resident');
+
+  const groups = (
+    by === 'responsibility'
+      ? byResponsibility(visible, trip, library).map((g) => ({ ...g }))
+      : groupLines(visible, by, library)
+  ).sort((a, b) =>
     by === 'phase'
       ? PHASE_ORDER.indexOf(a.key as Phase) - PHASE_ORDER.indexOf(b.key as Phase)
       : a.label.localeCompare(b.label),
   );
 
   const checkedCount = visible.filter((l) => session.checked[l.key]).length;
-  const residentCount = result.lines.length - visible.length;
+  const residentCount = going.length - visible.length;
 
   const copyText = () => {
-    void navigator.clipboard?.writeText(listToText(trip, library, result, by, gates));
+    void navigator.clipboard?.writeText(
+      listToText(trip, library, { ...result, lines: going }, by === 'responsibility' ? 'person' : by, gates),
+    );
   };
 
   return (
@@ -175,6 +192,13 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
           </section>
         );
       })}
+
+      {dropped.length > 0 && (
+        <p className="editor__note">
+          {dropped.length} item{dropped.length === 1 ? '' : 's'} deliberately left behind. They are
+          on the Load plan screen, struck through, not deleted.
+        </p>
+      )}
 
       {result.orphaned.length > 0 && (
         <section className="group group--orphans">

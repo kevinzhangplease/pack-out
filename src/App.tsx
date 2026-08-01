@@ -4,6 +4,8 @@ import { ListView } from './views/ListView';
 import { PlanView } from './views/PlanView';
 import { ShopView } from './views/ShopView';
 import { PrepView } from './views/PrepView';
+import { LoadPlanView } from './views/LoadPlanView';
+import { KidListView } from './views/KidListView';
 import { LibraryView } from './views/LibraryView';
 import { DataView } from './views/DataView';
 
@@ -33,9 +35,17 @@ const THEMES: { id: Theme; label: string }[] = [
   { id: 'redlight', label: 'Red' },
 ];
 
+const LOAD_MODES = [
+  { id: 'list', label: 'List' },
+  { id: 'plan', label: 'Load plan' },
+  { id: 'kid', label: 'Kid list' },
+] as const;
+type LoadMode = (typeof LOAD_MODES)[number]['id'];
+
 export function App() {
   const { trip, ui, setTheme } = useStore();
   const [at, setAt] = useState<Destination>('load');
+  const [loadMode, setLoadMode] = useState<LoadMode>('list');
   const [focusItemId, setFocusItemId] = useState<string | null>(null);
 
   const goToItem = (itemId: string) => {
@@ -119,7 +129,26 @@ export function App() {
         {at === 'plan' && <PlanView onEditItem={goToItem} />}
         {at === 'shop' && <ShopView />}
         {at === 'prep' && <PrepView onEditItem={goToItem} />}
-        {at === 'load' && <ListView onEditItem={goToItem} />}
+        {at === 'load' && (
+          <>
+            <div className="segmented segmented--modes" role="group" aria-label="Load view">
+              {LOAD_MODES.map((mode) => (
+                <button
+                  key={mode.id}
+                  type="button"
+                  className={loadMode === mode.id ? 'segmented__btn is-active' : 'segmented__btn'}
+                  aria-pressed={loadMode === mode.id}
+                  onClick={() => setLoadMode(mode.id)}
+                >
+                  {mode.label}
+                </button>
+              ))}
+            </div>
+            {loadMode === 'list' && <ListView onEditItem={goToItem} />}
+            {loadMode === 'plan' && <LoadPlanView />}
+            {loadMode === 'kid' && <KidListView />}
+          </>
+        )}
         {at === 'library' && <LibraryView focusItemId={focusItemId} />}
         {at === 'data' && <DataView />}
         {pending && (

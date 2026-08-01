@@ -49,6 +49,8 @@ export const FAMILY_CAR_SUMMER: Trip = {
   rackIds: ['roof-rack'],
   shelters: [{ id: 'sh-1', name: 'Big tent', occupantIds: ['p-adult-1', 'p-adult-2', 'p-kid-1', 'p-kid-2'] }],
   mealPlan: FAMILY_MEAL_PLAN,
+  packedBy: { 'kitchen-bin': 'p-adult-1', 'sleep-duffel': 'p-adult-2', 'cooler': 'p-adult-1' },
+  leftBehind: [],
 };
 
 export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
@@ -72,6 +74,8 @@ export const SOLO_BACKCOUNTRY_SHOULDER: Trip = {
     { id: 'mp-3', dayIndex: 1, slot: 'dinner', mealId: 'meal-dehydrated' },
     { id: 'mp-4', dayIndex: 2, slot: 'breakfast', mealId: 'meal-oats' },
   ],
+  packedBy: {},
+  leftBehind: [],
 };
 
 export const WINTER_HIKE_IN: Trip = {
@@ -93,6 +97,8 @@ export const WINTER_HIKE_IN: Trip = {
     { id: 'mp-1', dayIndex: 0, slot: 'dinner', mealId: 'meal-dehydrated' },
     { id: 'mp-2', dayIndex: 1, slot: 'breakfast', mealId: 'meal-oats' },
   ],
+  packedBy: {},
+  leftBehind: [],
 };
 
 export const KAYAK_TRIP: Trip = {
@@ -115,6 +121,8 @@ export const KAYAK_TRIP: Trip = {
     { id: 'mp-2', dayIndex: 1, slot: 'breakfast', mealId: 'meal-oats' },
     { id: 'mp-3', dayIndex: 1, slot: 'dinner', mealId: 'meal-pasta' },
   ],
+  packedBy: {},
+  leftBehind: [],
 };
 
 /** Degenerate: nobody selected. */
@@ -125,6 +133,8 @@ export const NOBODY: Trip = {
   attendeeIds: [],
   shelters: [],
   mealPlan: [],
+  packedBy: {},
+  leftBehind: [],
 };
 
 /** Degenerate: zero nights. */

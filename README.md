@@ -90,8 +90,10 @@ The library lint pass runs in tests and in the UI.
   list, shopping list by store section with pantry stock, generated prep tasks
   on the timeline, cooler loading order, cold chain, complexity budget and
   weather contingency.
-- **Phase 4 — packing reality.** The load plan, load-order views, responsibility
-  assignment, the kid-facing list, the shakedown pass.
+- **Phase 4 — packing reality.** *Done.* The top-down load plan with tappable
+  zones for vehicle, pack and kayak; per-zone weights and loading notes;
+  responsibility assignment as a fifth grouping axis; the shakedown pass with
+  the 20%-of-body-weight flag and leave-behind; the kid-facing list.
 - **Phase 5 — judgement.** Trip plan document, gear condition, jurisdiction and
   seasonal prompts, group and multi-household logistics.
 - **Phase 6 — the loop.** Post-trip review feeding proposed rule edits.

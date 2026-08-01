@@ -209,3 +209,68 @@ different moment — a different day, in fact — so it belongs with the other
 things that happen at T-3 days and the night before. The workflow step formerly
 labelled "Shop" is labelled "Food" for this reason; the shopping list is its
 output, not its whole subject.
+
+---
+
+## ADR-013 — Load zones are footprint zones, so they can be drawn
+
+**Context.** The signature element is a top-down load plan with tappable zones.
+An earlier zone list had "rear floor" and "rear top", which is a vertical
+stack — and a top-down plan cannot show stacking.
+
+**Decision.** Vehicle zones are spatial footprints: roof, cabin front, cabin
+second row, boot forward, boot at the tailgate, under the floor, hitch. The
+heavy-low-forward guidance moved into the zone's note rather than into its name.
+
+**Rationale.** A diagram that lies about geometry is worse than a list. Making
+the zones match what can actually be drawn keeps the plan honest, and the note
+carries the loading principle better than a zone name could.
+
+Packs and kayaks get their own vocabularies, and the plan is switchable by
+transport rather than fixed by trip style — you drive to a trailhead, so the
+same list gets loaded twice in one day.
+
+---
+
+## ADR-014 — Pack zones come from what a thing is; vehicle zones from its bin
+
+**Context.** Containers are the right unit for a vehicle: you carry a bin. They
+are the wrong unit for a pack, where a sleeping bag and a stove are in the same
+"personal pack" but belong at opposite ends of it.
+
+**Decision.** For a vehicle or a boat, the zone comes from the container. For a
+pack, resolution is: explicit `Item.packZone`, then the container's carried
+zone, then a default from the item's category.
+
+**Consequence.** A container with no zone for a given transport yields `null`
+and lands in a visible "no place assigned" bucket rather than being silently
+guessed at.
+
+---
+
+## ADR-015 — Left behind is shown, not deleted
+
+**Context.** The shakedown pass needs a way to drop things from a trip.
+
+**Decision.** Left-behind items come off the packing list but appear in their
+own struck-through section on the load plan, with a one-tap "Bring it".
+
+**Rationale.** Same principle as ADR-003 and ADR-011: a decision is not the same
+as an absence. If dropping the screen shelter looked identical to the screen
+shelter never having qualified, you would lose the ability to reconsider it —
+and the post-trip review would have nothing to learn from.
+
+---
+
+## ADR-016 — The shakedown follows the transport you are looking at
+
+**Context.** The load plan is switchable, but the shakedown initially keyed off
+the trip's own transport, so switching to the pack view on a car-camping trip
+showed a plan with no weight check.
+
+**Decision.** `shakedown` takes the transport being viewed, defaulting to the
+trip's own.
+
+**Rationale.** Found in browser verification. The switch exists precisely
+because you drive to a trailhead — and the moment you are looking at the pack is
+exactly the moment the weight question matters.

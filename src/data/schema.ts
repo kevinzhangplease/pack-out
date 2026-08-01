@@ -12,7 +12,7 @@ import type { Library, Trip } from './types';
  * data written by an older version of the app, which by definition does not
  * match today's types.
  */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export interface Migration {
   to: number;
@@ -43,6 +43,44 @@ export const MIGRATIONS: Migration[] = [
       if (!library && Array.isArray(data.items)) {
         if (!Array.isArray(data.meals)) data.meals = [];
         if (!data.pantry || typeof data.pantry !== 'object') data.pantry = {};
+      }
+      return data;
+    },
+  },
+  {
+    to: 3,
+    describe: 'added load zones, packing responsibility and the left-behind list',
+    migrate(data) {
+      const library = data.library as Record<string, unknown> | undefined;
+      const containers = (library?.containers ?? data.containers) as
+        | Record<string, unknown>[]
+        | undefined;
+      if (Array.isArray(containers)) {
+        for (const container of containers) {
+          if (container.zones || typeof container.loadZone !== 'string') continue;
+          // v2 had one loadZone string with no transport. Map the old vehicle
+          // names onto the new footprint zones and leave the rest unassigned,
+          // which the load plan surfaces rather than guessing at.
+          const legacy: Record<string, string> = {
+            'rear-floor': 'boot-front',
+            'rear-top': 'boot-rear',
+            'rear-door': 'boot-rear',
+            cabin: 'cabin-rear',
+            roof: 'roof',
+            'under-floor': 'under-floor',
+            boat: 'bow',
+          };
+          const mapped = legacy[container.loadZone as string];
+          if (mapped) container.zones = { vehicle: mapped };
+          delete container.loadZone;
+        }
+      }
+      const trips = data.trips;
+      if (Array.isArray(trips)) {
+        for (const trip of trips as Record<string, unknown>[]) {
+          if (!trip.packedBy || typeof trip.packedBy !== 'object') trip.packedBy = {};
+          if (!Array.isArray(trip.leftBehind)) trip.leftBehind = [];
+        }
       }
       return data;
     },
