@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore, type Theme } from './state/store';
 import { ListView } from './views/ListView';
+import { PlanView } from './views/PlanView';
 import { LibraryView } from './views/LibraryView';
 import { DataView } from './views/DataView';
 
@@ -16,7 +17,7 @@ import { DataView } from './views/DataView';
 type Destination = 'plan' | 'shop' | 'prep' | 'load' | 'go' | 'review' | 'library' | 'data';
 
 const WORKFLOW: { id: Destination; label: string; phase: number }[] = [
-  { id: 'plan', label: 'Plan', phase: 2 },
+  { id: 'plan', label: 'Plan', phase: 1 },
   { id: 'shop', label: 'Shop', phase: 3 },
   { id: 'prep', label: 'Prep', phase: 3 },
   { id: 'load', label: 'Load', phase: 1 },
@@ -113,6 +114,7 @@ export function App() {
       </nav>
 
       <main className="main">
+        {at === 'plan' && <PlanView onEditItem={goToItem} />}
         {at === 'load' && <ListView onEditItem={goToItem} />}
         {at === 'library' && <LibraryView focusItemId={focusItemId} />}
         {at === 'data' && <DataView />}
