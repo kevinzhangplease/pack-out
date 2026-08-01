@@ -2,6 +2,8 @@
 
 A transparent, editable rules engine for camping, with a packing app on top of it.
 
+**Live: https://pack-out.vercel.app** — deployed from `main` on every push.
+
 The list is generated, never hand-maintained. Every item can say why it is there,
 every reason is a rule in plain language, and every rule is data you can edit
 rather than code somebody shipped. It is built the way a zoning bylaw is built:
@@ -106,6 +108,13 @@ duplicated trip fabricating evidence for the learning loop.
   gear for repair, adjust a quantity. Each names the trips it came from and
   shows the rule change as a plain-English diff you accept or dismiss. Plus the
   condition builder, so every rule is editable in the UI.
+
+## Working on it
+
+Commit straight to `main`; Vercel deploys on push. Run `npm run check` first —
+typecheck, tests and the stylesheet audit all have to pass. See `CLAUDE.md` for
+the invariants that hold the design together, and `docs/decisions.md` for why
+each one exists.
 
 ## Accessibility and physical context
 
