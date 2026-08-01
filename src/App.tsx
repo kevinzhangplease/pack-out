@@ -126,7 +126,7 @@ export function App() {
         {at === 'prep' && <PrepView onEditItem={goToItem} />}
         {at === 'load' && (
           <>
-            <div className="segmented" role="group" aria-label="Load view">
+            <div className="segmented segmented--modes" role="group" aria-label="Load view">
               {LOAD_MODES.map((mode) => (
                 <button
                   key={mode.id}

@@ -123,14 +123,25 @@
      A coarse pointer gets targets you can hit in the rain with cold hands.
      A mouse gets the density a mouse can use. Overridden below. */
   /*
-   * These are the OUTER heights. Segmented buttons subtract the track padding
-   * from --control-h, so the token has to be big enough that what is left is
-   * still 44px — sizing the container to 44 leaves the actual target at 38.
+   * These are the DRAWN heights, and they are sized against the text rather
+   * than against the 44px touch minimum. A 13px label centred in a 50px pill
+   * leaves ~18px of air above and below it and 16px beside it, which reads as
+   * a control padded much harder vertically than horizontally — the space is
+   * where the glyphs are not. The minimum target is met by extending the hit
+   * area instead (see .btn / .segmented__btn in app.css), which is what the
+   * 44pt guidance is actually about.
    */
   --row-h: 46px;
-  --control-h: 50px;
-  --control-h-sm: 48px;
+  --control-h: 44px;
+  --control-h-sm: 38px;
   --pad-x: 1rem;
+  /*
+   * Horizontal padding inside controls, set to roughly the vertical inset the
+   * height leaves around the text so the space around a label reads even. It
+   * has to move with --control-h in both directions.
+   */
+  --pad-ctrl: 0.875rem;
+  --pad-ctrl-sm: 0.75rem;
   --sidebar-w: 15rem;
 }
 
@@ -141,6 +152,8 @@
     --control-h: 32px;
     --control-h-sm: 26px;
     --pad-x: 0.75rem;
+    --pad-ctrl: 0.75rem;
+    --pad-ctrl-sm: 0.5rem;
   }
 }
 

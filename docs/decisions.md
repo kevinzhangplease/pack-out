@@ -450,3 +450,42 @@ technical diagram rather than an illustration.
 
 **What was dropped:** condensed display type, the tarp/spruce/hi-vis palette as
 structural colour, and uppercase on buttons and nav.
+
+---
+
+## ADR-027 — Controls are drawn to fit their text; the 44px minimum is a hit area
+
+**Context.** ADR-024 fixed a real bug — segmented buttons were 32–38px on
+touch, below the 44px minimum — by raising the height tokens until the drawn
+control was 44px or more. That worked and it made the app look wrong. A 13px
+label centred in a 50px pill has about 18px of air above and below it and 14px
+beside it. The complaint that arrived was "the padding above and below the text
+is much larger than left or right", and it was correct: the space is where the
+glyphs are not, and no amount of horizontal padding fixes it, because widening
+the sides to match only makes the whole control bigger.
+
+**Decision.** The height tokens size the control to its text (`--control-h`
+44px, `--control-h-sm` 38px on a coarse pointer, unchanged on a fine one), and
+anything that ends up shorter than 44px gets the difference back as an
+invisible `::after` overlay centred on it. `--pad-ctrl` moves down with the
+heights so the inset reads even in both axes.
+
+**Rationale.** Apple's 44pt guidance is about the region that responds to a
+finger, not the region that is painted. Conflating the two is what inflated the
+controls. Separating them keeps both properties: the drawn box is proportionate
+to its label, and the target is still 44px.
+
+**The hazard, and how it is checked.** An overlay that overhangs its box can
+overhang a *neighbour*, and the later element in document order wins the tap.
+The first version of this did exactly that — the load-mode switcher sat flush
+against the toolbar below it, and a tap 20px under "List" landed on
+"Container". The switcher now has a margin, wrapped chip rows get a wider row
+gap, and the check is a Playwright sweep that walks `elementFromPoint` outward
+from the centre of every small control on every screen and asserts the point
+still belongs to that control 22px out. Measuring the element box would not
+have caught it; measuring what actually receives the tap did.
+
+**Also.** `.input--area` dropped from a 4.5rem floor to 3.25rem. At 4.5rem a
+single line of text sat against the top of the box with an inch of blank under
+it — the worst offender in the app for looking bottom-heavy, and the only
+element the audit flagged on both pointer types.

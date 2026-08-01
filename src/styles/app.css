@@ -134,7 +134,7 @@
   align-items: center;
   gap: var(--s2);
   min-height: var(--control-h);
-  padding: 0 var(--s4);
+  padding: 0 var(--pad-ctrl);
   border-radius: var(--r-sm);
   font-size: var(--text-sm);
   font-weight: var(--w-medium);
@@ -207,7 +207,7 @@
     align-items: stretch;
     gap: var(--s1);
     height: 100dvh;
-    padding: var(--s4) var(--s3);
+    padding: var(--s3);
     overflow-x: visible;
     overflow-y: auto;
     border-bottom: 0;
@@ -307,7 +307,7 @@
 }
 
 .empty {
-  padding: var(--s6) var(--s4);
+  padding: var(--s5);
   text-align: center;
   font-size: var(--text-sm);
   color: var(--fg-faint);
@@ -317,13 +317,50 @@
    Controls
    ========================================================================== */
 
+/*
+ * The 44pt touch minimum is a rule about the hit area, not about the drawn
+ * box. Drawing every control 44px tall was the first attempt and it left a
+ * 13px label floating in a tall pill with far more space above and below it
+ * than beside it. So the controls are drawn to fit their text, and anything
+ * that ends up shorter than 44px gets the difference back as an invisible
+ * overlay centred on it.
+ *
+ * Only on a coarse pointer: a mouse does not need it, and on desktop the
+ * overlay would overhang neighbouring controls in dense toolbars.
+ */
+@media (pointer: coarse) {
+  .btn--sm,
+  .chip--sm,
+  .segmented__btn {
+    position: relative;
+  }
+
+  .btn--sm::after,
+  .chip--sm::after,
+  .segmented__btn::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 44px;
+    translate: 0 -50%;
+  }
+
+  /* The overhang needs somewhere to go: at a 6px row gap two wrapped rows of
+     chips would reach into each other and the lower row would win the tap. */
+  .chips {
+    row-gap: var(--s3);
+  }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--s2);
   min-height: var(--control-h);
-  padding: 0 var(--s5);
+  padding: 0 var(--pad-ctrl);
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   background: var(--bg-panel);
@@ -349,7 +386,7 @@
 
 .btn--sm {
   min-height: var(--control-h-sm);
-  padding: 0 var(--s4);
+  padding: 0 var(--pad-ctrl-sm);
   font-size: var(--text-xs);
 }
 
@@ -393,7 +430,7 @@
 
 .segmented__btn {
   min-height: calc(var(--control-h) - 6px);
-  padding: 0 var(--s4);
+  padding: 0 var(--pad-ctrl);
   border-radius: calc(var(--r-sm) - 2px);
   font-size: var(--text-sm);
   font-weight: var(--w-medium);
@@ -415,8 +452,18 @@
 
 .segmented--sm .segmented__btn {
   min-height: calc(var(--control-h-sm) - 4px);
-  padding: 0 var(--s3);
+  padding: 0 var(--pad-ctrl-sm);
   font-size: var(--text-xs);
+}
+
+/*
+ * The mode switcher sits directly above a view that opens with its own
+ * segmented toolbar. Without this the two tracks abut, which reads as one
+ * six-button control and leaves the touch targets of the upper row nothing to
+ * expand into.
+ */
+.segmented--modes {
+  margin-bottom: var(--s4);
 }
 
 .segmented--wrap {
@@ -439,7 +486,7 @@
 
 .input {
   min-height: var(--control-h);
-  padding: 0 var(--s4);
+  padding: 0 var(--pad-ctrl);
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   background: var(--bg-panel);
@@ -462,8 +509,14 @@
   max-width: 5.5rem;
 }
 
+/*
+ * Two lines' worth, not three. The old 4.5rem floor left a single line of text
+ * sitting against the top of a box with an inch of blank under it, which is
+ * the worst offender in the app for looking bottom-heavy. Two lines is still
+ * unmistakably a textarea, and it grows from there.
+ */
 .input--area {
-  min-height: 4.5rem;
+  min-height: 3.25rem;
   padding: var(--s3) var(--s4);
   line-height: 1.45;
   resize: vertical;
@@ -531,7 +584,7 @@
   align-items: center;
   gap: var(--s2);
   min-height: var(--control-h);
-  padding: 0 var(--s4);
+  padding: 0 var(--pad-ctrl);
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--bg-panel);
@@ -566,7 +619,7 @@
 
 .chip--sm {
   min-height: var(--control-h-sm);
-  padding: 0 var(--s3);
+  padding: 0 var(--pad-ctrl-sm);
   font-size: var(--text-xs);
 }
 
@@ -2386,7 +2439,7 @@
 .crash {
   max-width: 36rem;
   margin: 0 auto;
-  padding: var(--s8) var(--s5);
+  padding: var(--s6);
 }
 
 .crash__title {
