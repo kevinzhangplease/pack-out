@@ -80,6 +80,7 @@ export function GoView() {
 
   return (
     <div className="go">
+      <div className="split">
       <section className={doc.complete ? 'panel panel--plan' : 'panel panel--plan is-incomplete'}>
         <div className="panel__head">
           <h2 className="panel__title">Trip plan</h2>
@@ -176,8 +177,15 @@ export function GoView() {
           )}
         </div>
 
+      </section>
+
+      <section className="panel split__rail">
+        <div className="panel__head">
+          <h2 className="panel__title">What gets sent</h2>
+        </div>
         <pre className="plan__preview">{doc.text}</pre>
       </section>
+      </div>
 
       <section className="panel">
         <div className="panel__head">

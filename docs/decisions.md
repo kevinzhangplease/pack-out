@@ -383,3 +383,70 @@ would have handed the learning loop a second, fabricated observation of the same
 event, which is exactly enough to trip the two-report threshold and generate a
 rule edit from evidence that does not exist. There is a regression test that
 demonstrates the fabrication and then the fix.
+
+---
+
+## ADR-023 — Density comes from grouped-inset lists, not from smaller type
+
+**Context.** The first design put a 1px border on every row. At 1440×900 that
+gave nine visible items out of two hundred, inside a 960px column with 480px of
+dead space, behind three stacked bands of chrome.
+
+**Decision.** Rows live inside a card with hairlines between them, rounded only
+at the ends — one border per group instead of one per row. Chrome collapsed into
+a single toolbar. On a wide screen groups flow into two columns.
+
+**Result.** Forty-one rows visible instead of nine, at the same legible type
+size. Density came from removing borders and bands, not from shrinking text.
+
+---
+
+## ADR-024 — Control size scales with the pointer, not the viewport
+
+**Context.** "Dense" and "44px touch targets in the rain with cold hands" are
+in direct conflict, and viewport width is the wrong proxy — a touch laptop is
+wide, a phone in landscape is not narrow.
+
+**Decision.** Row and control heights are tokens overridden under
+`@media (pointer: fine)`. Coarse pointers get 46–50px, precise pointers get
+32–34px.
+
+**Consequence, found by measuring.** Segmented buttons subtract track padding
+from `--control-h`, so setting the token to 44 left the real target at 38. The
+tokens are the OUTER height and are sized so that what remains after the
+subtraction still clears 44. Verified under device emulation, because a desktop
+browser at phone width still reports a fine pointer and the check silently
+passes.
+
+---
+
+## ADR-025 — The focus ring is per-theme, because "unmissable" is per-theme
+
+**Context.** The original design used hi-vis yellow for focus in all three
+themes, on the reasoning that hi-vis is unmissable.
+
+**Decision.** `--flag` is defined per theme: burnt orange on light, hi-vis
+yellow on dark, coral on red-light.
+
+**Rationale.** The contrast audit measured yellow-on-white at 1.51:1. Hi-vis
+yellow is unmissable against a dark van interior and nearly invisible against a
+white page. The principle was right and the implementation assumed one colour
+could satisfy it everywhere. The eye would not have caught this; the arithmetic
+did.
+
+---
+
+## ADR-026 — Apple-clean, with the field register kept only where it works
+
+**Context.** The original brief asked for equipment rather than decoration —
+tarp blue, hi-vis, condensed type, field manuals. A later request asked for
+sleek, modern, Apple-inspired.
+
+**Decision.** Neutral greys carry structure, one accent carries state, chrome is
+translucent and blurred. Three things from the field original survive because
+they still earn their place: mono for quantities and rule text, where consistent
+digit width genuinely matters; a hi-vis focus ring; and the load plan drawn as a
+technical diagram rather than an illustration.
+
+**What was dropped:** condensed display type, the tarp/spruce/hi-vis palette as
+structural colour, and uppercase on buttons and nav.

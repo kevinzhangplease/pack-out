@@ -1,126 +1,238 @@
 /*
  * Design tokens.
  *
- * Register: field manual, load plan, gear tag, dry bag. Deep tarp blue,
- * spruce, hi-vis yellow, pale lichen. Type should look like equipment.
+ * The register: quiet, layered, dense. Neutral greys carry the structure, one
+ * accent carries state, and colour is spent only where it means something —
+ * a warning, a selection, a threshold crossed.
  *
- * Three themes: day, night, and a red-light mode for keeping night vision
- * while standing at the back of a van at 11pm.
+ * What survives from the field-tool original, because it earns its keep:
+ * mono for quantities and rule text, where consistent digits actually matter;
+ * a hi-vis focus ring, where being unmissable is the whole job; and the load
+ * plan drawn as a technical diagram rather than an illustration.
  *
- * Every foreground/background pair named here is checked against WCAG AA by
- * scripts/audit-css.mjs. Do not add a colour without adding it to that check.
+ * Three themes. Every foreground/background pair below is checked against
+ * WCAG AA by scripts/audit-css.mjs, in all three. Do not add a colour without
+ * adding it to that check.
  */
 
 :root {
-  /* --- palette ------------------------------------------------------- */
-  --tarp-900: #0a1a2b;
-  --tarp-800: #0f2740;
-  --tarp-700: #163a5c;
-  --tarp-600: #1d4a72;
-  --tarp-400: #4d87b8;
-  --spruce-700: #1f4433;
-  --spruce-500: #2f6b4f;
-  --spruce-300: #6fa889;
-  --hivis-500: #f2c200;
-  --hivis-400: #ffd633;
-  --rust-500: #b3441c;
-  --lichen-100: #eef0e9;
-  --lichen-200: #dde1d5;
-  --lichen-300: #c3c9b8;
-  --lichen-500: #8b9280;
-  --ink-900: #14170f;
-  --ink-700: #2f3428;
-  --paper: #f7f8f4;
-
-  /* --- semantic, day ------------------------------------------------- */
-  --bg: var(--paper);
+  /* --- surfaces --------------------------------------------------------
+     Grouped-inset, the way a settings list is built: a recessed page, cards
+     that float on it, and hairlines inside the cards instead of borders on
+     every row. This is what makes density readable. */
+  --bg: #f2f2f7;
   --bg-panel: #ffffff;
-  --bg-sunk: var(--lichen-100);
-  --fg: var(--ink-900);
-  --fg-muted: #4a5142;
-  --line: var(--lichen-300);
-  --line-strong: var(--lichen-500);
-  --accent: var(--tarp-600);
+  --bg-sunk: #e7e7ec;
+  --bg-raised: #ffffff;
+
+  /* Translucent chrome. Sidebar and top bar sit above content and let it
+     show through, so scrolling reads as movement under glass. */
+  --material: rgb(255 255 255 / 0.86);
+  --material-border: rgb(0 0 0 / 0.08);
+  --scrim: rgb(0 0 0 / 0.28);
+
+  /* --- text ------------------------------------------------------------ */
+  --fg: #1c1c1e;
+  --fg-muted: #55555c;
+  --fg-faint: #86868b;
+
+  /* --- lines ----------------------------------------------------------- */
+  --line: #e2e2e7;
+  --line-strong: #86868b;
+
+  /* --- accent and state ------------------------------------------------
+     `accent` tints text, icons and borders. `accent-solid` fills buttons and
+     needs to carry `accent-fg` at 4.5:1, which is why it is darker. */
+  --accent: #0063e0;
+  --accent-solid: #0063e0;
   --accent-fg: #ffffff;
-  --ok: var(--spruce-500);
+  --accent-wash: #e8f1ff;
+
+  --ok: #1d7a3d;
   --warn: #8a5a00;
-  --danger: var(--rust-500);
-  --flag: var(--hivis-500);
-  --flag-fg: var(--ink-900);
-  --topbar-bg: var(--tarp-900);
-  --topbar-fg: #f2f5ef;
-  --topbar-muted: #b9c4b2;
+  --danger: #c02a24;
+  --ok-wash: #e6f5eb;
+  --warn-wash: #fdf2e0;
+  --danger-wash: #fdecec;
 
-  /* --- type ---------------------------------------------------------- */
-  --font-display: ui-sans-serif, 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue', sans-serif;
-  --font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  /*
+   * The focus ring. It is whatever is genuinely unmissable against THIS theme's
+   * background, which is not the same colour in each — hi-vis yellow reads as
+   * unmissable on a dark van interior and as nearly invisible on white. The
+   * audit caught that; the eye would not have.
+   */
+  --flag: #c2410c;
+  --flag-fg: #ffffff;
 
-  --step--1: 0.8125rem;
-  --step-0: 1rem;
-  --step-1: 1.1875rem;
-  --step-2: 1.4375rem;
-  --step-3: 1.8125rem;
+  --topbar-bg: #ffffff;
+  --topbar-fg: #1c1c1e;
+  --topbar-muted: #55555c;
 
-  /* --- space and shape ----------------------------------------------- */
-  --sp-1: 0.25rem;
-  --sp-2: 0.5rem;
-  --sp-3: 0.75rem;
-  --sp-4: 1rem;
-  --sp-5: 1.5rem;
-  --sp-6: 2rem;
-  --radius: 3px;
+  /* --- type -------------------------------------------------------------
+     System stack: SF on Apple, Segoe UI Variable on Windows, Roboto on
+     Android. Native everywhere, nothing to download, offline by definition. */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable Text',
+    'Segoe UI', Roboto, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'SFMono-Regular', 'Cascadia Mono', Menlo,
+    Consolas, monospace;
 
-  /* Used one-handed, in the rain, with cold hands. */
-  --touch: 48px;
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.9375rem;
 
-  --shadow: 0 1px 0 rgb(20 23 15 / 0.08), 0 2px 6px rgb(20 23 15 / 0.06);
+  /* Optical tracking: tighter as type grows, which is what keeps large text
+     from looking loose and small text from looking cramped. */
+  --track-tight: -0.022em;
+  --track-snug: -0.012em;
+  --track-wide: 0.04em;
+
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semi: 600;
+  --w-bold: 700;
+
+  /* --- space ------------------------------------------------------------ */
+  --s1: 0.25rem;
+  --s2: 0.375rem;
+  --s3: 0.5rem;
+  --s4: 0.75rem;
+  --s5: 1rem;
+  --s6: 1.5rem;
+  --s7: 2rem;
+  --s8: 3rem;
+
+  /* --- shape ------------------------------------------------------------ */
+  --r-xs: 5px;
+  --r-sm: 7px;
+  --r: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+
+  /* --- elevation --------------------------------------------------------
+     Barely there. Depth comes from the surface colour, not from shadow. */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 12px 48px rgb(0 0 0 / 0.16);
+
+  /* --- density ----------------------------------------------------------
+     A coarse pointer gets targets you can hit in the rain with cold hands.
+     A mouse gets the density a mouse can use. Overridden below. */
+  /*
+   * These are the OUTER heights. Segmented buttons subtract the track padding
+   * from --control-h, so the token has to be big enough that what is left is
+   * still 44px — sizing the container to 44 leaves the actual target at 38.
+   */
+  --row-h: 46px;
+  --control-h: 50px;
+  --control-h-sm: 48px;
+  --pad-x: 1rem;
+  --sidebar-w: 15rem;
 }
+
+/* A precise pointer can hit a smaller target, so it gets more on screen. */
+@media (pointer: fine) {
+  :root {
+    --row-h: 34px;
+    --control-h: 32px;
+    --control-h-sm: 26px;
+    --pad-x: 0.75rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Dark. True black behind raised cards — the contrast between #000 and #1c1c1e
+   does the work that shadows do in light mode.
+   -------------------------------------------------------------------------- */
 
 :root[data-theme='night'] {
-  --bg: #0a0d0c;
-  --bg-panel: #141a19;
-  --bg-sunk: #0d1211;
-  --fg: #e6ebe2;
-  --fg-muted: #a3ad9c;
-  --line: #2a332f;
-  --line-strong: #63756d;
-  --accent: #7fb6e0;
-  --accent-fg: #06131f;
-  --ok: #74c79a;
-  --warn: #e0b355;
-  --danger: #f08155;
-  --flag: var(--hivis-400);
-  --flag-fg: #14170f;
-  --topbar-bg: #05100a;
-  --topbar-fg: #dfe6da;
-  --topbar-muted: #9aa694;
+  --bg: #000000;
+  --bg-panel: #1c1c1e;
+  --bg-sunk: #2c2c2e;
+  --bg-raised: #242426;
+
+  --material: rgb(28 28 30 / 0.84);
+  --material-border: rgb(255 255 255 / 0.1);
+  --scrim: rgb(0 0 0 / 0.6);
+
+  --fg: #f5f5f7;
+  --fg-muted: #a3a3aa;
+  --fg-faint: #8a8a90;
+
+  --line: #38383c;
+  --line-strong: #7c7c84;
+
+  --accent: #6cb2ff;
+  --accent-solid: #0a68d8;
+  --accent-fg: #ffffff;
+  --accent-wash: #16273a;
+
+  --ok: #52d07c;
+  --warn: #f0b04a;
+  --danger: #ff7b6f;
+  --ok-wash: #102a19;
+  --warn-wash: #2c2110;
+  --danger-wash: #2f1614;
+
+  --flag: #ffd633;
+  --flag-fg: #1c1c1e;
+
+  --topbar-bg: #1c1c1e;
+  --topbar-fg: #f5f5f7;
+  --topbar-muted: #a3a3aa;
+
+  --shadow-sm: none;
   --shadow: none;
+  --shadow-lg: 0 16px 56px rgb(0 0 0 / 0.6);
 }
 
-/*
- * Red-light mode. Everything is a shade of red on near-black, because any
- * other hue costs you the dark adaptation you just spent twenty minutes on.
- */
+/* --------------------------------------------------------------------------
+   Red light. Nothing here is blue or white: any short wavelength costs the dark
+   adaptation this theme exists to protect. Everything is a red on near-black,
+   and the hierarchy is carried by lightness alone.
+   -------------------------------------------------------------------------- */
+
 :root[data-theme='redlight'] {
-  --bg: #0b0000;
-  --bg-panel: #170202;
-  --bg-sunk: #0f0101;
-  --fg: #ff8f7a;
-  --fg-muted: #c26a5c;
-  --line: #3a1010;
-  --line-strong: #a5443c;
-  --accent: #ff6b52;
-  --accent-fg: #170202;
-  --ok: #ff8f7a;
-  --warn: #ffab8f;
-  --danger: #ff4d3d;
-  --flag: #ff6b52;
-  --flag-fg: #170202;
-  /* No blue and no white up here: a bright bar costs the dark adaptation
-     the rest of this theme exists to protect. */
-  --topbar-bg: #120100;
-  --topbar-fg: #ff8f7a;
-  --topbar-muted: #c26a5c;
+  --bg: #000000;
+  --bg-panel: #170303;
+  --bg-sunk: #210606;
+  --bg-raised: #1d0505;
+
+  --material: rgb(23 3 3 / 0.88);
+  --material-border: rgb(255 120 100 / 0.14);
+  --scrim: rgb(0 0 0 / 0.7);
+
+  --fg: #ff9d8a;
+  --fg-muted: #d4705f;
+  --fg-faint: #b45a4b;
+
+  --line: #3d1210;
+  --line-strong: #a8483c;
+
+  --accent: #ff7a5e;
+  --accent-solid: #8c2a1c;
+  --accent-fg: #ffd9cf;
+  --accent-wash: #2a0b07;
+
+  --ok: #ff9d8a;
+  --warn: #ffb59f;
+  --danger: #ff6146;
+  --ok-wash: #1f0806;
+  --warn-wash: #240a07;
+  --danger-wash: #2b0a07;
+
+  --flag: #ff7a5e;
+  --flag-fg: #170303;
+
+  --topbar-bg: #140202;
+  --topbar-fg: #ff9d8a;
+  --topbar-muted: #d4705f;
+
+  --shadow-sm: none;
   --shadow: none;
+  --shadow-lg: 0 16px 56px rgb(0 0 0 / 0.7);
 }

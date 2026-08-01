@@ -81,6 +81,8 @@ export function LoadPlanView() {
         </p>
       )}
 
+      <div className="split">
+      <div>
       <LoadPlan transport={active} groups={groups} selected={zone} onSelect={setZone} />
 
       {trim && (
@@ -88,7 +90,9 @@ export function LoadPlanView() {
           {trim}
         </p>
       )}
+      </div>
 
+      <div className="split__rail">
       {selected ? (
         <section className="panel">
           <div className="panel__head">
@@ -128,6 +132,8 @@ export function LoadPlanView() {
           Tap a zone to see what goes in it and why it goes there.
         </p>
       )}
+      </div>
+      </div>
 
       {pass.applies && (
         <section className="panel">

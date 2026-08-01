@@ -102,7 +102,7 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
         </section>
       )}
 
-      <div className="list__bar">
+      <div className="toolbar">
         <div className="segmented" role="group" aria-label="Group the list by">
           {GROUPS.map((group) => (
             <button
@@ -118,28 +118,28 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
           ))}
         </div>
 
-        <div className="list__meta">
+        <span className="toolbar__spacer" />
+
+        <span className="toolbar__stat">
           {/*
-            A progress ring on a list the app has flagged as dangerous implies a
-            check nobody made, so a blocking gate removes it.
+            A progress figure on a list the app has flagged as dangerous implies
+            a check nobody made, so a blocking gate replaces it.
           */}
           {qualified ? (
-            <span className="list__unqualified">Qualified list — see the warning above</span>
+            <span className="toolbar__warn">Qualified — see above</span>
           ) : (
-            <span className="list__progress">
-              <strong>{checkedCount}</strong> / {visible.length} packed
-            </span>
+            <>
+              <strong>{checkedCount}</strong>/{visible.length}
+            </>
           )}
-          <span className="list__weight">{(result.totalWeight_g / 1000).toFixed(1)} kg</span>
-        </div>
-      </div>
+        </span>
+        <span className="toolbar__stat">{(result.totalWeight_g / 1000).toFixed(1)} kg</span>
 
-      <div className="list__actions">
         <button type="button" className="btn btn--sm" onClick={copyText}>
-          Copy as text
+          Copy
         </button>
         <button type="button" className="btn btn--sm" onClick={resetChecks}>
-          Reset checks
+          Reset
         </button>
         {residentCount > 0 && (
           <button
@@ -147,12 +147,29 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
             className="btn btn--sm"
             onClick={() => setShowResident((v) => !v)}
           >
-            {showResident ? 'Hide' : 'Show'} {residentCount} that live in the vehicle
+            {showResident ? 'Hide' : 'Show'} {residentCount} in-vehicle
           </button>
         )}
       </div>
 
-      {groups.map((group) => {
+      {!qualified && visible.length > 0 && (
+        <div
+          className="progress"
+          role="progressbar"
+          aria-valuenow={checkedCount}
+          aria-valuemin={0}
+          aria-valuemax={visible.length}
+          aria-label="Packed"
+        >
+          <span
+            className="progress__fill"
+            style={{ width: `${(checkedCount / visible.length) * 100}%` }}
+          />
+        </div>
+      )}
+
+      <div className="groups">
+        {groups.map((group) => {
         const collapsed = session.collapsed[`${by}:${group.key}`] ?? false;
         const done = group.lines.filter((l) => session.checked[l.key]).length;
         const allDone = done === group.lines.length;
@@ -195,8 +212,9 @@ export function ListView({ onEditItem }: { onEditItem: (itemId: string) => void 
               </ul>
             )}
           </section>
-        );
-      })}
+          );
+        })}
+      </div>
 
       {coverage.theirs.length > 0 && (
         <p className="editor__note">
@@ -256,7 +274,9 @@ function Row({
   const { item } = line;
   // Durables that live packed need verifying, not checking. Checking off things
   // that never move trains you to tick without looking.
-  const verb = item.kind === 'consumable' ? 'Restock' : item.type === 'action' ? 'Done' : 'Verify';
+  // Order matters: actions are stored as consumables, so the type has to be
+  // checked first or every task on the timeline reads "Restock".
+  const verb = item.type === 'action' ? 'Do' : item.kind === 'consumable' ? 'Restock' : 'Verify';
 
   return (
     <li className={checked ? 'row is-checked' : 'row'}>

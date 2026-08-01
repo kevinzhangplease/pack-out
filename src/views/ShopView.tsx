@@ -107,6 +107,7 @@ export function ShopView() {
         </p>
       )}
 
+      <div className="split">
       <section className="panel">
         <div className="panel__head">
           <h2 className="panel__title">Meal plan</h2>
@@ -233,7 +234,7 @@ export function ShopView() {
         )}
       </section>
 
-      <section className="panel">
+      <section className="panel split__rail">
         <div className="panel__head">
           <h2 className="panel__title">Shopping list</h2>
           <span className="panel__meta">{toBuyCount(food.shopping)} to buy</span>
@@ -306,6 +307,7 @@ export function ShopView() {
           tracked, not presence — and it never removes anything from the packing list.
         </p>
       </section>
+      </div>
     </div>
   );
 }

@@ -14,11 +14,14 @@ import { DataView } from './views/DataView';
 /**
  * Navigation is hybrid, on purpose.
  *
- * Trip work follows the workflow — Plan, Shop, Prep, Load, Go, Review — because
+ * Trip work follows the workflow — Plan, Food, Prep, Load, Go, Review — because
  * that is the order the work actually happens in and it answers "what now?".
  * The Library sits outside that sequence because it has a different lifetime:
  * it is edited between trips, not during one, and burying rule editing inside
  * "Plan" would misrepresent what it is.
+ *
+ * The same list of destinations renders as a scrolling strip on a phone and as
+ * a sidebar rail on a desktop. One structure, two layouts, no duplicated markup.
  */
 type Destination = 'plan' | 'shop' | 'prep' | 'load' | 'go' | 'review' | 'library' | 'data';
 
@@ -31,10 +34,15 @@ const WORKFLOW: { id: Destination; label: string }[] = [
   { id: 'review', label: 'Review' },
 ];
 
-const THEMES: { id: Theme; label: string }[] = [
-  { id: 'day', label: 'Day' },
-  { id: 'night', label: 'Night' },
-  { id: 'redlight', label: 'Red' },
+const ASIDE: { id: Destination; label: string }[] = [
+  { id: 'library', label: 'Library' },
+  { id: 'data', label: 'Data' },
+];
+
+const THEMES: { id: Theme; label: string; title: string }[] = [
+  { id: 'day', label: 'Day', title: 'Daylight' },
+  { id: 'night', label: 'Night', title: 'Night' },
+  { id: 'redlight', label: 'Red', title: 'Red light — preserves night vision' },
 ];
 
 const LOAD_MODES = [
@@ -55,25 +63,41 @@ export function App() {
     setAt('library');
   };
 
+  const tab = (step: { id: Destination; label: string }, index?: number) => (
+    <li key={step.id}>
+      <button
+        type="button"
+        className={at === step.id ? 'nav__tab is-active' : 'nav__tab'}
+        aria-current={at === step.id ? 'page' : undefined}
+        onClick={() => setAt(step.id)}
+      >
+        {index !== undefined && <span className="nav__num">{index + 1}</span>}
+        {step.label}
+      </button>
+    </li>
+  );
+
   return (
     <div className="app">
       <header className="topbar">
         <div className="topbar__brand">
           <span className="brand__mark" aria-hidden="true" />
-          <span className="brand__name">PACK OUT</span>
+          <span className="brand__name">Pack Out</span>
         </div>
+
         <p className="topbar__trip">
           {trip ? (
             <>
-              <strong>{trip.name}</strong>
+              <span className="topbar__name">{trip.name}</span>
               <span className="topbar__dates">
                 {trip.startDate} → {trip.endDate}
               </span>
             </>
           ) : (
-            'No trip'
+            <span className="topbar__name">No trip</span>
           )}
         </p>
+
         <div className="segmented segmented--sm" role="group" aria-label="Light mode">
           {THEMES.map((theme) => (
             <button
@@ -81,6 +105,7 @@ export function App() {
               type="button"
               className={ui.theme === theme.id ? 'segmented__btn is-active' : 'segmented__btn'}
               aria-pressed={ui.theme === theme.id}
+              title={theme.title}
               onClick={() => setTheme(theme.id)}
             >
               {theme.label}
@@ -90,39 +115,9 @@ export function App() {
       </header>
 
       <nav className="nav" aria-label="Main">
-        <ol className="nav__steps">
-          {WORKFLOW.map((step, i) => (
-            <li key={step.id}>
-              <button
-                type="button"
-                className={at === step.id ? 'nav__tab is-active' : 'nav__tab'}
-                aria-current={at === step.id ? 'page' : undefined}
-                onClick={() => setAt(step.id)}
-              >
-                <span className="nav__num">{i + 1}</span>
-                {step.label}
-              </button>
-            </li>
-          ))}
-        </ol>
-        <div className="nav__aside">
-          <button
-            type="button"
-            className={at === 'library' ? 'nav__tab is-active' : 'nav__tab'}
-            aria-current={at === 'library' ? 'page' : undefined}
-            onClick={() => setAt('library')}
-          >
-            Library
-          </button>
-          <button
-            type="button"
-            className={at === 'data' ? 'nav__tab is-active' : 'nav__tab'}
-            aria-current={at === 'data' ? 'page' : undefined}
-            onClick={() => setAt('data')}
-          >
-            Data
-          </button>
-        </div>
+        <ol className="nav__group">{WORKFLOW.map((step, i) => tab(step, i))}</ol>
+        <span className="nav__rule" aria-hidden="true" />
+        <ul className="nav__group">{ASIDE.map((step) => tab(step))}</ul>
       </nav>
 
       <main className="main">
@@ -131,7 +126,7 @@ export function App() {
         {at === 'prep' && <PrepView onEditItem={goToItem} />}
         {at === 'load' && (
           <>
-            <div className="segmented segmented--modes" role="group" aria-label="Load view">
+            <div className="segmented" role="group" aria-label="Load view">
               {LOAD_MODES.map((mode) => (
                 <button
                   key={mode.id}

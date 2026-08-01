@@ -116,9 +116,24 @@ typecheck, tests and the stylesheet audit all have to pass. See `CLAUDE.md` for
 the invariants that hold the design together, and `docs/decisions.md` for why
 each one exists.
 
+## Design
+
+Quiet, layered and dense. Neutral greys carry the structure, one accent carries
+state, and the chrome is translucent so content reads as passing underneath it.
+Rows sit in grouped-inset cards with hairlines between them — one border per
+group rather than one per row, which is what lets the list be dense without
+becoming a grid of boxes. Wide screens get a sidebar, two columns of groups, and
+two-pane layouts where they help.
+
+Three things survive from the field-tool original because they still earn their
+place: mono for quantities and rule text, a hi-vis focus ring, and the load plan
+drawn as a technical diagram. See ADR-023 to ADR-026.
+
 ## Accessibility and physical context
 
 Used one-handed, at the back of a van, in the rain, in the dark, with cold hands.
-Minimum 44px touch targets (verified in a browser, not by eye), real checkbox
-semantics rather than buttons with `aria-pressed`, day / night / red-light
-themes, WCAG AA verified by script, reduced motion respected.
+Control sizes scale with the pointer: 46–50px on touch, 32–34px with a mouse,
+both verified under device emulation rather than by eye. Real checkbox semantics
+rather than buttons with `aria-pressed`, day / night / red-light themes, 72
+colour pairs checked against WCAG AA by script across all three, focus trapped
+in modals, reduced motion respected.

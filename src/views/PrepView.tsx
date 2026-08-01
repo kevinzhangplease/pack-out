@@ -35,6 +35,7 @@ export function PrepView({ onEditItem }: { onEditItem: (itemId: string) => void 
         </p>
       </section>
 
+      <div className="groups">
       {BEFORE_YOU_GO.map((phase) => {
         const phaseActions = actions.filter((line) => line.item.phase === phase);
         const phasePrep = food.prep.filter((p) => p.task.phase === phase);
@@ -108,6 +109,8 @@ export function PrepView({ onEditItem }: { onEditItem: (itemId: string) => void 
           </section>
         );
       })}
+
+      </div>
 
       {food.cooler.length > 0 && (
         <section className="panel">
